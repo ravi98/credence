@@ -8,6 +8,19 @@ import uuid
 import gradio as gr
 from dotenv import load_dotenv
 
+# Hugging Face ZeroGPU integration
+try:
+    import spaces
+except ImportError:
+    class _MockSpaces:
+        def GPU(self, fn=None, duration=None):
+            if fn is None:
+                def _wrap(f):
+                    return f
+                return _wrap
+            return fn
+    spaces = _MockSpaces()
+
 # Load local .env if present
 load_dotenv()
 
@@ -55,6 +68,7 @@ def user_submit(message, history):
     history.append({"role": "user", "content": message.strip()})
     return "", history
 
+@spaces.GPU
 def bot_respond(history, session_id, cibil, income, loan_amt, category, sector, emp_type, api_key, model_name):
     if not history:
         return history, ""
