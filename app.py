@@ -1,265 +1,271 @@
+"""🏦 FinNav / Credence — Indian Loan Advisor AI
+Built with Gradio, LangGraph, ChromaDB, and Qwen on Groq.
+Ready for deployment on Hugging Face Spaces (ZeroGPU / Free CPU).
+"""
+
 import os
 import uuid
-import streamlit as st
+import gradio as gr
 from dotenv import load_dotenv
 
-# Load .env variables
+# Load local .env if present
 load_dotenv()
 
 from rag.graph import loan_advisor_graph
 
-# Session Chat ID initialization
-if "chat_id" not in st.session_state:
-    st.session_state.chat_id = f"chat_{uuid.uuid4().hex[:8]}"
+# Custom styling for a modern, sleek banking assistant interface
+CUSTOM_CSS = """
+.gradio-container {
+    max-width: 1250px !important;
+    margin: 0 auto !important;
+}
+.header-box {
+    text-align: center;
+    padding: 18px 0;
+    margin-bottom: 12px;
+}
+.header-title {
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: #1E3A8A;
+    margin-bottom: 4px;
+}
+.header-subtitle {
+    font-size: 1.0rem;
+    color: #4B5563;
+    margin-bottom: 8px;
+}
+.metric-badge {
+    background-color: #EEF2FF;
+    border: 1px solid #C7D2FE;
+    color: #3730A3;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+    display: inline-block;
+    margin: 2px 4px;
+}
+"""
 
-# Page configuration
-st.set_page_config(
-    page_title="FinNav — Indian Loan Advisor AI (LangGraph)",
-    page_icon="🏦",
-    layout="wide",
-    initial_sidebar_state="expanded"
-)
+def user_submit(message, history):
+    if not message or not message.strip():
+        return "", history
+    history = history or []
+    history.append({"role": "user", "content": message.strip()})
+    return "", history
 
-# Custom Styling
-st.markdown("""
-<style>
-    .main-header {
-        font-size: 2.2rem;
-        font-weight: 700;
-        color: #1E3A8A;
-        margin-bottom: 0.2rem;
-    }
-    .sub-header {
-        font-size: 1.05rem;
-        color: #4B5563;
-        margin-bottom: 1.5rem;
-    }
-    .intent-badge {
-        background-color: #EEF2FF;
-        border: 1px solid #C7D2FE;
-        border-radius: 6px;
-        padding: 4px 10px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        color: #4338CA;
-        display: inline-block;
-        margin-bottom: 10px;
-    }
-    .disclaimer-box {
-        background-color: #F9FAFB;
-        border-left: 4px solid #3B82F6;
-        padding: 10px 14px;
-        font-size: 0.85rem;
-        color: #374151;
-        margin-top: 10px;
-        margin-bottom: 15px;
-    }
-</style>
-""", unsafe_allow_html=True)
+def bot_respond(history, session_id, cibil, income, loan_amt, category, sector, emp_type, api_key, model_name):
+    if not history:
+        return history, ""
 
-# Sidebar: Configuration & Controls
-with st.sidebar:
-    st.header("⚙️ Model & API Settings")
-
-    env_groq_key = os.environ.get("GROQ_API_KEY", "")
-    env_model = os.environ.get("MODEL_NAME", "qwen/qwen3.8-27b")
-    env_base_url = os.environ.get("OPENAI_BASE_URL", "https://api.groq.com/openai/v1")
-
-    api_key_input = st.text_input(
-        "Groq / Grok API Key",
-        value=env_groq_key,
-        type="password",
-        help="Add your API key here or in .env file (GROQ_API_KEY)."
-    )
-
-    model_name_input = st.text_input(
-        "Model Name",
-        value=env_model,
-        help="Model string to use (e.g. qwen/qwen3.8-27b, qwen-2.5-32b, etc.)"
-    )
-
-    if api_key_input:
-        st.success(f"✅ Active Model: `{model_name_input}`")
-    else:
-        st.info("ℹ️ *No API key set: The engine will display direct factual catalog data with zero hallucinations.*")
-
-    st.divider()
-
-    st.subheader("🎯 Search & Filter Presets")
-    category = st.selectbox(
-        "Loan Category Filter",
-        ["All", "Home Loan", "Personal Loan", "Education Loan", "Vehicle Loan"],
-        index=0
-    )
-    sector = st.selectbox(
-        "Banking Sector Filter",
-        ["All", "Public", "Private", "NBFC", "Co-operative"],
-        index=0
-    )
-
-    st.subheader("👤 User Profile Details")
-    emp_type = st.selectbox(
-        "Employment Type",
-        ["Salaried", "Self-Employed / Business", "Student", "Pensioner", "Doctor / Professional", "Other"]
-    )
-    cibil_score = st.slider("CIBIL / Credit Score", 300, 900, 750)
-    monthly_income = st.text_input("Monthly Income / Annual CTC", placeholder="e.g., Rs. 60,000 / month")
-    loan_amount = st.text_input("Loan Amount Requested", placeholder="e.g., Rs. 20 Lakhs")
-
-    st.divider()
-    st.caption(f"🆔 **Active Session ID**: `{st.session_state.chat_id}`")
-    col_btn1, col_btn2 = st.columns(2)
-    with col_btn1:
-        if st.button("➕ New Chat", use_container_width=True, help="Create a brand new chat session with fresh memory"):
-            st.session_state.chat_id = f"chat_{uuid.uuid4().hex[:8]}"
-            st.session_state.messages = []
-            st.rerun()
-    with col_btn2:
-        if st.button("🗑️ Clear Screen", use_container_width=True):
-            st.session_state.messages = []
-            st.rerun()
-
-    st.markdown("### 💡 Quick Try Prompts")
-    quick_prompts = [
-        "Compare SBI Scholar Loan vs Canara Vidya Turant",
-        "What is EBLR vs MCLR and which is better?",
-        "Calculate EMI for 20 Lakhs at 8.75% for 7 years",
-        "Doctor wanting flexible overdraft personal loan",
-        "Compare HDFC Xpress Car Loan vs SBI New Car Loan"
-    ]
-    for p in quick_prompts:
-        if st.button(f"👉 {p[:38]}...", help=p):
-            st.session_state.selected_prompt = p
-
-# Main Area
-st.markdown('<div class="main-header">🏦 FinNav — Indian Loan Advisor AI</div>', unsafe_allow_html=True)
-st.markdown('<div class="sub-header">Powered by LangGraph Agent + ChromaDB Grounded RAG + Qwen Model</div>', unsafe_allow_html=True)
-
-# Metrics Strip
-col1, col2, col3, col4 = st.columns(4)
-col1.metric("Verified Schemes", "163")
-col2.metric("Institutions", "34")
-col3.metric("LangGraph Nodes", "Compare, Calc, FAQ, Rec")
-col4.metric("Engine Guardrails", "Strict Grounding")
-
-st.markdown("""
-<div class="disclaimer-box">
-    <strong>🛡️ Anti-Hallucination & Mathematical Precision:</strong> All interest rates, benchmarks, loan quantum limits, and eligibility criteria are retrieved directly from official bank filings. EMI figures are calculated deterministically in Python.
-</div>
-""", unsafe_allow_html=True)
-
-# Session State for Chat
-if "messages" not in st.session_state:
-    st.session_state.messages = [
-        {
-            "role": "assistant",
-            "content": (
-                "Hello! I am **FinNav**, your verified Indian loan advisor powered by **LangGraph**.\n\n"
-                "I can help you with:\n"
-                "- ⚖️ **Direct Side-by-Side Comparisons** (e.g. *'Compare SBI Scholar vs Canara Vidya Turant'*)\n"
-                "- 🔍 **Personalized Recommendations** (e.g. *'Doctor looking for overdraft credit line'*)\n"
-                "- 🧮 **Exact EMI Calculations** (e.g. *'Calculate EMI for 15 Lakhs at 8.75% for 7 years'*)\n"
-                "- 📚 **Indian Banking Concepts** (e.g. *'What is EBLR vs MCLR?'*, *'Section 80E tax rules'*)\n\n"
-                "How can I assist your loan search today?"
-            )
-        }
-    ]
-
-# Display Chat History
-for msg in st.session_state.messages:
-    with st.chat_message(msg["role"]):
-        if "intent" in msg and msg["intent"]:
-            intent_icons = {
-                "COMPARISON": "⚖️ Scheme Comparison",
-                "RECOMMENDATION": "🔍 Personalized Recommendation",
-                "CONCEPT_FAQ": "📚 Banking Concept & Regulation",
-                "ELIGIBILITY_QUERY": "📋 Eligibility & Criteria",
-                "META_CHAT": "💬 Clarification",
-                "EMI_CALCULATOR": "🧮 Exact EMI Calculation"
-            }
-            if msg.get("intent") == "RECOMMENDATION" and not msg.get("candidates"):
-                badge_text = "⚠️ Eligibility Advisory"
-            else:
-                badge_text = intent_icons.get(msg["intent"], f"⚡ {msg['intent']}")
-            st.markdown(f'<span class="intent-badge">{badge_text}</span>', unsafe_allow_html=True)
-
-        st.markdown(msg["content"])
-
-        if "candidates" in msg and msg["candidates"]:
-            with st.expander("🔍 View Retrieved Verified Catalog Data"):
-                for c in msg["candidates"]:
-                    m = c["metadata"]
-                    st.markdown(f"**{m.get('scheme_name')}** ({m.get('institution')}) — Rate: `{m.get('interest_rate_range')}` | [Official Portal]({m.get('source_url')})")
-
-# Prompt Handling
-prompt = st.chat_input("Ask about loans, request comparisons, or calculate EMIs...")
-
-if "selected_prompt" in st.session_state and st.session_state.selected_prompt:
-    prompt = st.session_state.selected_prompt
-    del st.session_state.selected_prompt
-
-if prompt:
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    with st.chat_message("user"):
-        st.markdown(prompt)
+    last_user_query = history[-1]["content"]
 
     user_profile = {
         "Employment": emp_type,
-        "CIBIL Score": cibil_score,
-        "Income": monthly_income if monthly_income else None,
-        "Requested Amount": loan_amount if loan_amount else None,
+        "CIBIL Score": cibil,
+        "Income": income.strip() if income else None,
+        "Requested Amount": loan_amt.strip() if loan_amt else None,
         "Category Filter": category if category != "All" else None,
         "Sector Filter": sector if sector != "All" else None
     }
 
-    with st.chat_message("assistant"):
-        with st.spinner("Processing through LangGraph workflow (Router → Retrieval → Verification)..."):
-            # Execute LangGraph pipeline
-            graph_input = {
-                "chat_id": st.session_state.chat_id,
-                "query": prompt,
-                "user_profile": user_profile,
-                "api_key": api_key_input if api_key_input else None,
-                "model_name": model_name_input if model_name_input else "qwen/qwen3.8-27b"
-            }
+    graph_input = {
+        "chat_id": session_id,
+        "query": last_user_query,
+        "user_profile": user_profile,
+        "api_key": api_key.strip() if api_key else None,
+        "model_name": model_name.strip() if model_name else "qwen/qwen3.8-27b"
+    }
 
-            # Invoke with session checkpointer thread_id
-            result_state = loan_advisor_graph.invoke(
-                graph_input,
-                config={"configurable": {"thread_id": st.session_state.chat_id}}
+    try:
+        result = loan_advisor_graph.invoke(
+            graph_input,
+            config={"configurable": {"thread_id": session_id}}
+        )
+
+        detected_intent = result.get("intent", "RECOMMENDATION")
+        final_text = result.get("final_response", "")
+        candidates = result.get("candidates", [])
+
+        intent_badges = {
+            "COMPARISON": "⚖️ Scheme Comparison",
+            "RECOMMENDATION": "🔍 Personalized Recommendation",
+            "CONCEPT_FAQ": "📚 Banking Concept & Regulation",
+            "ELIGIBILITY_QUERY": "📋 Eligibility & Criteria",
+            "META_CHAT": "💬 Clarification",
+            "EMI_CALCULATOR": "🧮 Exact EMI Calculation"
+        }
+        if detected_intent == "RECOMMENDATION" and not candidates:
+            badge = "⚠️ Eligibility Advisory"
+        else:
+            badge = intent_badges.get(detected_intent, f"⚡ {detected_intent}")
+
+        formatted_reply = f"**`{badge}`**\n\n{final_text}"
+        history.append({"role": "assistant", "content": formatted_reply})
+
+        # Sources markdown
+        sources_md = ""
+        if candidates:
+            sources_md = "#### 🔍 Fact Check: Official Sources for Last Answer\n"
+            for idx, c in enumerate(candidates, 1):
+                m = c["metadata"]
+                sources_md += f"{idx}. **{m.get('scheme_name')}** ({m.get('institution')}) — Rate: `{m.get('interest_rate_range')}` | [Official Portal]({m.get('source_url')})\n"
+
+        return history, sources_md
+    except Exception as e:
+        history.append({"role": "assistant", "content": f"⚠️ An error occurred while processing: {str(e)}"})
+        return history, ""
+
+def create_new_session():
+    new_id = f"chat_{uuid.uuid4().hex[:8]}"
+    return new_id, [], f"🆔 Active Session: `{new_id}`", ""
+
+def load_example(example_text):
+    return example_text
+
+with gr.Blocks(title="FinNav — Indian Loan Advisor AI") as demo:
+    session_id_state = gr.State(value=f"chat_{uuid.uuid4().hex[:8]}")
+
+    gr.HTML("""
+    <div class="header-box">
+        <div class="header-title">🏦 FinNav — Indian Loan Advisor AI</div>
+        <div class="header-subtitle">Powered by LangGraph Agent + ChromaDB Grounded RAG + Qwen Model</div>
+        <div>
+            <span class="metric-badge">163 Verified Schemes</span>
+            <span class="metric-badge">34 Lending Institutions</span>
+            <span class="metric-badge">Zero Hallucination Guardrails</span>
+            <span class="metric-badge">100% Free</span>
+        </div>
+    </div>
+    """)
+
+    with gr.Row():
+        # Left Column: User Profile & Filter Controls
+        with gr.Column(scale=1):
+            with gr.Accordion("⚙️ Model & API Settings", open=False):
+                api_key_input = gr.Textbox(
+                    label="Groq API Key",
+                    value=os.environ.get("GROQ_API_KEY", ""),
+                    type="password",
+                    placeholder="gsk_..."
+                )
+                model_name_input = gr.Textbox(
+                    label="Model Name",
+                    value=os.environ.get("MODEL_NAME", "qwen/qwen3.8-27b")
+                )
+
+            gr.Markdown("### 🎯 Profile & Filters")
+            category_dropdown = gr.Dropdown(
+                label="Loan Category Filter",
+                choices=["All", "Home Loan", "Personal Loan", "Education Loan", "Vehicle Loan"],
+                value="All"
+            )
+            sector_dropdown = gr.Dropdown(
+                label="Banking Sector Filter",
+                choices=["All", "Public", "Private", "NBFC", "Co-operative"],
+                value="All"
+            )
+            emp_type_dropdown = gr.Dropdown(
+                label="Employment Type",
+                choices=["Salaried", "Self-Employed / Business", "Student", "Pensioner", "Doctor / Professional", "Other"],
+                value="Salaried"
+            )
+            cibil_slider = gr.Slider(
+                label="CIBIL / Credit Score",
+                minimum=300,
+                maximum=900,
+                value=750,
+                step=10
+            )
+            income_text = gr.Textbox(
+                label="Monthly Income / Annual CTC",
+                placeholder="e.g. 60,000 / month or 12k"
+            )
+            loan_amt_text = gr.Textbox(
+                label="Loan Amount Requested",
+                placeholder="e.g. 20 Lakhs or 2cr"
             )
 
-            detected_intent = result_state.get("intent", "RECOMMENDATION")
-            final_text = result_state.get("final_response", "")
-            candidates = result_state.get("candidates", [])
+            session_label = gr.Markdown(f"🆔 Active Session: `{session_id_state.value}`")
+            new_chat_btn = gr.Button("➕ New Chat Session", variant="secondary")
 
-            intent_icons = {
-                "COMPARISON": "⚖️ Scheme Comparison",
-                "RECOMMENDATION": "🔍 Personalized Recommendation",
-                "CONCEPT_FAQ": "📚 Banking Concept & Regulation",
-                "ELIGIBILITY_QUERY": "📋 Eligibility & Criteria",
-                "META_CHAT": "💬 Clarification",
-                "EMI_CALCULATOR": "🧮 Exact EMI Calculation"
-            }
-            if detected_intent == "RECOMMENDATION" and not candidates:
-                badge_text = "⚠️ Eligibility Advisory"
-            else:
-                badge_text = intent_icons.get(detected_intent, f"⚡ {detected_intent}")
-            st.markdown(f'<span class="intent-badge">{badge_text}</span>', unsafe_allow_html=True)
-            st.markdown(final_text)
+            gr.Markdown("### 💡 Quick Try Prompts")
+            ex1 = gr.Button("👉 Compare SBI Scholar vs Canara Vidya Turant", size="sm")
+            ex2 = gr.Button("👉 What is EBLR vs MCLR and which is better?", size="sm")
+            ex3 = gr.Button("👉 Calculate EMI for 20 Lakhs at 8.75% for 7 years", size="sm")
+            ex4 = gr.Button("👉 Can u share the affordable housing options", size="sm")
+            ex5 = gr.Button("👉 Doctor wanting flexible overdraft personal loan", size="sm")
 
-            if candidates:
-                with st.expander("🔍 Fact Check: Official Sources for this Answer"):
-                    for idx, c in enumerate(candidates, 1):
-                        m = c["metadata"]
-                        st.markdown(f"**{idx}. {m.get('scheme_name')}** — {m.get('institution')} ({m.get('sector')})")
-                        st.markdown(f"- **Key**: `{m.get('compact_key', 'N/A')}`")
-                        st.markdown(f"- **Rate**: {m.get('interest_rate_range')} | **Benchmark**: {m.get('benchmark')}")
-                        st.markdown(f"- **Official Link**: [{m.get('source_url')}]({m.get('source_url')})")
+        # Right Column: Chat Interface
+        with gr.Column(scale=2):
+            chatbot = gr.Chatbot(
+                label="Advisor Dialogue",
+                height=520
+            )
 
-    st.session_state.messages.append({
-        "role": "assistant",
-        "content": final_text,
-        "intent": detected_intent,
-        "candidates": candidates
-    })
+            with gr.Row():
+                msg_input = gr.Textbox(
+                    placeholder="Ask about loans, request comparisons, check eligibility, or calculate EMIs...",
+                    label="",
+                    scale=5,
+                    lines=1,
+                    max_lines=3
+                )
+                send_btn = gr.Button("Send", variant="primary", scale=1)
+
+            clear_chat_btn = gr.Button("🗑️ Clear Screen", size="sm")
+
+            sources_display = gr.Markdown("")
+
+    # Interactions
+    chat_inputs = [
+        chatbot,
+        session_id_state,
+        cibil_slider,
+        income_text,
+        loan_amt_text,
+        category_dropdown,
+        sector_dropdown,
+        emp_type_dropdown,
+        api_key_input,
+        model_name_input
+    ]
+
+    # Submit handlers
+    send_btn.click(
+        user_submit,
+        inputs=[msg_input, chatbot],
+        outputs=[msg_input, chatbot]
+    ).then(
+        bot_respond,
+        inputs=chat_inputs,
+        outputs=[chatbot, sources_display]
+    )
+
+    msg_input.submit(
+        user_submit,
+        inputs=[msg_input, chatbot],
+        outputs=[msg_input, chatbot]
+    ).then(
+        bot_respond,
+        inputs=chat_inputs,
+        outputs=[chatbot, sources_display]
+    )
+
+    clear_chat_btn.click(lambda: ([], ""), outputs=[chatbot, sources_display])
+
+    new_chat_btn.click(
+        create_new_session,
+        outputs=[session_id_state, chatbot, session_label, sources_display]
+    )
+
+    # Example button clicks
+    ex1.click(lambda: "Compare SBI Scholar vs Canara Vidya Turant", outputs=msg_input)
+    ex2.click(lambda: "What is EBLR vs MCLR and which is better?", outputs=msg_input)
+    ex3.click(lambda: "Calculate EMI for 20 Lakhs at 8.75% for 7 years", outputs=msg_input)
+    ex4.click(lambda: "can u share the affordable housing options", outputs=msg_input)
+    ex5.click(lambda: "Doctor wanting flexible overdraft personal loan", outputs=msg_input)
+
+if __name__ == "__main__":
+    demo.launch(theme=gr.themes.Soft(), css=CUSTOM_CSS)
