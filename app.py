@@ -138,7 +138,7 @@ def create_new_session():
 def load_example(example_text):
     return example_text
 
-with gr.Blocks(title="FinNav — Indian Loan Advisor AI") as demo:
+with gr.Blocks(title="FinNav — Indian Loan Advisor AI", theme=gr.themes.Soft(), css=CUSTOM_CSS) as demo:
     session_id_state = gr.State(value=f"chat_{uuid.uuid4().hex[:8]}")
 
     gr.HTML("""
@@ -215,7 +215,8 @@ with gr.Blocks(title="FinNav — Indian Loan Advisor AI") as demo:
         with gr.Column(scale=2):
             chatbot = gr.Chatbot(
                 label="Advisor Dialogue",
-                height=520
+                height=520,
+                type="messages"
             )
 
             with gr.Row():
@@ -282,4 +283,4 @@ with gr.Blocks(title="FinNav — Indian Loan Advisor AI") as demo:
     ex5.click(lambda: "Doctor wanting flexible overdraft personal loan", outputs=msg_input)
 
 if __name__ == "__main__":
-    demo.launch(theme=gr.themes.Soft(), css=CUSTOM_CSS)
+    demo.launch()
