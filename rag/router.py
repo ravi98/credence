@@ -80,17 +80,25 @@ INTENT_UTTERANCES = [
 ]
 
 class SemanticIntentRouter:
-    """Zero-cost local vector-based intent classifier."""
+    """Zero-cost local intent classifier with lazy initialization and crash-proof fallback."""
 
     def __init__(self):
-        self.client = chromadb.EphemeralClient()
-        self.collection = self.client.create_collection("intent_routing")
+        self.collection = None
+        self._chroma_failed = False
 
-        docs = [item[0] for item in INTENT_UTTERANCES]
-        metas = [{"intent": item[1]} for item in INTENT_UTTERANCES]
-        ids = [f"utterance_{i}" for i in range(len(INTENT_UTTERANCES))]
-
-        self.collection.add(documents=docs, metadatas=metas, ids=ids)
+    def _ensure_collection(self):
+        if self.collection is not None or self._chroma_failed:
+            return
+        try:
+            client = chromadb.EphemeralClient()
+            self.collection = client.get_or_create_collection("intent_routing")
+            docs = [item[0] for item in INTENT_UTTERANCES]
+            metas = [{"intent": item[1]} for item in INTENT_UTTERANCES]
+            ids = [f"utterance_{i}" for i in range(len(INTENT_UTTERANCES))]
+            self.collection.add(documents=docs, metadatas=metas, ids=ids)
+        except Exception as e:
+            self._chroma_failed = True
+            print(f"⚠️ ChromaDB ephemeral router disabled ({e}). Running on resilient native semantic matcher.")
 
     def route(self, query: str) -> str:
         """Determines conversational intent using fast deterministic paths followed by local semantic matching."""
@@ -121,13 +129,31 @@ class SemanticIntentRouter:
         if any(k in q for k in [" vs ", " vs. ", "versus", "difference between", "better than"]):
             return "COMPARISON"
 
-        # 6. Local Vector Similarity Routing
-        try:
-            results = self.collection.query(query_texts=[q], n_results=1)
-            if results and results["metadatas"] and results["metadatas"][0]:
-                return results["metadatas"][0][0]["intent"]
-        except Exception:
-            pass
+        # 6. Local ChromaDB Vector Similarity Routing (if available)
+        self._ensure_collection()
+        if self.collection is not None:
+            try:
+                results = self.collection.query(query_texts=[q], n_results=1)
+                if results and results.get("metadatas") and results["metadatas"][0]:
+                    return results["metadatas"][0][0]["intent"]
+            except Exception:
+                pass
+
+        # 7. Resilient Native Token-Overlap Similarity Matcher (Zero Dependencies)
+        q_words = set(q.split())
+        best_score = 0.0
+        best_intent = "RECOMMENDATION"
+        for doc, intent in INTENT_UTTERANCES:
+            d_words = set(doc.lower().split())
+            union = len(q_words | d_words)
+            if union > 0:
+                score = len(q_words & d_words) / union
+                if score > best_score:
+                    best_score = score
+                    best_intent = intent
+
+        if best_score >= 0.25:
+            return best_intent
 
         return "RECOMMENDATION"
 
