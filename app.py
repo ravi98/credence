@@ -6,6 +6,21 @@ from dotenv import load_dotenv
 # Load .env variables
 load_dotenv()
 
+# Resolve API key & Model securely from environment or Streamlit Cloud Secrets
+groq_api_key = os.environ.get("GROQ_API_KEY")
+if not groq_api_key:
+    try:
+        groq_api_key = st.secrets.get("GROQ_API_KEY")
+    except Exception:
+        groq_api_key = None
+
+model_name = os.environ.get("MODEL_NAME", "qwen/qwen3.8-27b")
+if not os.environ.get("MODEL_NAME"):
+    try:
+        model_name = st.secrets.get("MODEL_NAME", "qwen/qwen3.8-27b")
+    except Exception:
+        model_name = "qwen/qwen3.8-27b"
+
 from rag.graph import loan_advisor_graph
 
 # Session Chat ID initialization
@@ -59,32 +74,6 @@ st.markdown("""
 
 # Sidebar: Configuration & Controls
 with st.sidebar:
-    st.header("⚙️ Model & API Settings")
-
-    env_groq_key = os.environ.get("GROQ_API_KEY", "")
-    env_model = os.environ.get("MODEL_NAME", "qwen/qwen3.8-27b")
-    env_base_url = os.environ.get("OPENAI_BASE_URL", "https://api.groq.com/openai/v1")
-
-    api_key_input = st.text_input(
-        "Groq / Grok API Key",
-        value=env_groq_key,
-        type="password",
-        help="Add your API key here or in .env file (GROQ_API_KEY)."
-    )
-
-    model_name_input = st.text_input(
-        "Model Name",
-        value=env_model,
-        help="Model string to use (e.g. qwen/qwen3.8-27b, qwen-2.5-32b, etc.)"
-    )
-
-    if api_key_input:
-        st.success(f"✅ Active Model: `{model_name_input}`")
-    else:
-        st.info("ℹ️ *No API key set: The engine will display direct factual catalog data with zero hallucinations.*")
-
-    st.divider()
-
     st.subheader("🎯 Search & Filter Presets")
     category = st.selectbox(
         "Loan Category Filter",
@@ -219,8 +208,8 @@ if prompt:
                 "chat_id": st.session_state.chat_id,
                 "query": prompt,
                 "user_profile": user_profile,
-                "api_key": api_key_input if api_key_input else None,
-                "model_name": model_name_input if model_name_input else "qwen/qwen3.8-27b"
+                "api_key": groq_api_key,
+                "model_name": model_name
             }
 
             # Invoke with session checkpointer thread_id
