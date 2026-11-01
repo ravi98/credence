@@ -1,4 +1,4 @@
-# 🏦 FinNav / Credence — Indian Loan Advisor AI (Grounded RAG)
+# 🏦 Credence — Indian Loan Advisor AI (Grounded RAG)
 
 A 100% free, zero-hallucination conversational loan recommendation engine built with **Vue 3**, **Vite**, **Tailwind CSS**, **FastAPI**, **LangGraph**, **ChromaDB**, and **Groq (Qwen)**.
 

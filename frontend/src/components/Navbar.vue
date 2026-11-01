@@ -8,8 +8,8 @@
         </div>
         <div class="flex flex-col">
           <div class="flex items-baseline">
-            <span class="text-xl font-bold tracking-tight text-brand-deep">Fin</span>
-            <span class="text-xl font-bold tracking-tight text-brand">Nav</span>
+            <span class="text-xl font-bold tracking-tight text-brand-deep">Cred</span>
+            <span class="text-xl font-bold tracking-tight text-brand">ence</span>
           </div>
           <span class="text-[9px] uppercase tracking-wider text-brand-muted -mt-1 font-medium">Indian Loan Advisor</span>
         </div>
@@ -54,7 +54,7 @@
           class="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-white text-sm font-semibold px-4 py-2 rounded-lg transition shadow-sm"
         >
           <Sparkles class="w-4 h-4 text-sage-light" />
-          <span>Ask FinNav Advisor</span>
+          <span>Ask Credence Advisor</span>
         </router-link>
       </div>
 

@@ -10,7 +10,7 @@
           <div class="w-6 h-6 rounded bg-brand flex items-center justify-center text-white text-xs">
             <Landmark class="w-3.5 h-3.5" />
           </div>
-          <span>Fin<span class="text-brand">Nav</span></span>
+          <span>Cred<span class="text-brand">ence</span></span>
         </router-link>
         <button 
           @click="$emit('toggle-sidebar')" 
@@ -92,7 +92,7 @@
           class="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-brand-deep hover:bg-surface-secondary transition"
         >
           <BookOpen class="w-3.5 h-3.5 text-brand-icon" />
-          <span>FinNav Learn Hub</span>
+          <span>Credence Learn Hub</span>
         </router-link>
       </div>
     </div>

@@ -75,7 +75,7 @@
             Borrow with clarity, not confusion.
           </h2>
           <p class="text-sm text-brand-muted">
-            Traditional loan portals sell your phone number to telecallers. FinNav is built on strict data grounding, zero spam, and mathematical precision.
+            Traditional loan portals sell your phone number to telecallers. Credence is built on strict data grounding, zero spam, and mathematical precision.
           </p>
         </div>
 
@@ -123,11 +123,11 @@
       </div>
     </section>
 
-    <!-- Section 4: How FinNav Works -->
+    <!-- Section 4: How Credence Works -->
     <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
       <div class="text-center max-w-2xl mx-auto mb-12">
         <h2 class="text-2xl sm:text-3xl font-bold font-serif text-brand-deep mb-2">
-          How FinNav Works
+          How Credence Works
         </h2>
         <p class="text-sm text-brand-muted">
           From first question to lender execution in three straightforward steps.
@@ -215,7 +215,7 @@
     <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
       <div class="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-8 gap-4">
         <div>
-          <span class="text-xs font-semibold uppercase tracking-wider text-brand">FinNav Learn</span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-brand">Credence Learn</span>
           <h2 class="text-2xl sm:text-3xl font-bold font-serif text-brand-deep mt-1">
             A little knowledge can save you a lot of money.
           </h2>
@@ -259,7 +259,7 @@
     <section class="py-16 bg-surface-ivory border-t border-surface-border">
       <div class="max-w-4xl mx-auto px-4 text-center space-y-4">
         <h2 class="text-2xl sm:text-3xl font-bold font-serif text-brand-deep">
-          Have a loan question? Ask FinNav.
+          Have a loan question? Ask Credence.
         </h2>
         <p class="text-sm text-brand-muted max-w-xl mx-auto">
           Understand your borrowing options, compare lenders side-by-side, and make an informed decision without aggressive sales pitches.
@@ -270,7 +270,7 @@
             class="inline-flex items-center gap-2 bg-brand hover:bg-brand-hover text-white text-sm font-semibold px-6 py-3 rounded-xl transition shadow"
           >
             <Sparkles class="w-4 h-4 text-sage-light" />
-            <span>Talk to FinNav Advisor</span>
+            <span>Talk to Credence Advisor</span>
           </router-link>
         </div>
       </div>

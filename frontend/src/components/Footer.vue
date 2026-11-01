@@ -8,7 +8,7 @@
             <div class="w-7 h-7 rounded-md bg-[#2D526E] flex items-center justify-center text-white font-bold text-xs">
               <Landmark class="w-4 h-4" />
             </div>
-            <span class="text-lg font-bold text-white">Fin<span class="text-[#91B3C5]">Nav</span></span>
+            <span class="text-lg font-bold text-white">Cred<span class="text-[#91B3C5]">ence</span></span>
           </div>
           <p class="text-xs text-[#B9C4CB] leading-relaxed">
             Find the right loan. Understand every rupee. Strict closed-domain RAG grounded on 163 verified bank schemes and official RBI circulars.
@@ -34,10 +34,10 @@
         <div>
           <h4 class="text-xs font-semibold uppercase tracking-wider text-white mb-3">Decision Tools</h4>
           <ul class="space-y-2 text-xs text-[#B9C4CB]">
-            <li><router-link to="/advisor" class="hover:text-white transition">FinNav AI Advisor</router-link></li>
+            <li><router-link to="/advisor" class="hover:text-white transition">Credence AI Advisor</router-link></li>
             <li><router-link to="/compare" class="hover:text-white transition">Side-by-Side Comparison</router-link></li>
             <li><router-link to="/calculators/emi" class="hover:text-white transition">Deterministic EMI Calculator</router-link></li>
-            <li><router-link to="/learn" class="hover:text-white transition">FinNav Learn Hub</router-link></li>
+            <li><router-link to="/learn" class="hover:text-white transition">Credence Learn Hub</router-link></li>
           </ul>
         </div>
 
@@ -56,10 +56,10 @@
       <!-- Legal & RBI Grounding Disclaimer -->
       <div class="pt-8 text-xs text-[#8A9BA8] leading-relaxed space-y-2">
         <p>
-          <strong>Disclaimer:</strong> FinNav is an independent AI-powered financial research and comparison platform. We are not a bank, NBFC, or direct lender, nor do we issue loan approvals or solicit deposits. All interest rate ranges, processing fees, benchmark margins (EBLR/MCLR), and eligibility criteria are retrieved directly from published bank filings and RBI notifications. Always verify terms and read the Key Fact Statement (KFS) provided by your selected lender before executing loan agreements.
+          <strong>Disclaimer:</strong> Credence is an independent AI-powered financial research and comparison platform. We are not a bank, NBFC, or direct lender, nor do we issue loan approvals or solicit deposits. All interest rate ranges, processing fees, benchmark margins (EBLR/MCLR), and eligibility criteria are retrieved directly from published bank filings and RBI notifications. Always verify terms and read the Key Fact Statement (KFS) provided by your selected lender before executing loan agreements.
         </p>
         <div class="flex flex-col sm:flex-row justify-between items-center pt-4 border-t border-white/5 text-[11px] text-[#63727C]">
-          <span>© 2026 FinNav. Grounded Indian Retail Lending Advisor.</span>
+          <span>© 2026 Credence. Grounded Indian Retail Lending Advisor.</span>
           <div class="flex gap-4 mt-2 sm:mt-0">
             <span>Privacy Policy</span>
             <span>Terms of Service</span>

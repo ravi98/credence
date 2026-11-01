@@ -122,7 +122,7 @@
               class="text-xs font-semibold text-brand hover:text-brand-hover flex items-center gap-1.5 transition"
             >
               <Sparkles class="w-3.5 h-3.5 text-sage" />
-              <span>Ask FinNav</span>
+              <span>Ask Credence</span>
             </button>
 
             <a 

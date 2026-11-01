@@ -143,7 +143,7 @@
               class="w-full bg-brand hover:bg-brand-hover text-white text-xs font-semibold py-3 rounded-xl transition shadow-sm flex items-center justify-center gap-2"
             >
               <Sparkles class="w-4 h-4 text-sage-light" />
-              <span>Ask FinNav to Compare Schemes for This Quantum</span>
+              <span>Ask Credence to Compare Schemes for This Quantum</span>
             </button>
           </div>
         </div>

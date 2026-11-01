@@ -26,7 +26,7 @@ except Exception as e:
     ALL_SCHEMES = []
 
 app = FastAPI(
-    title="FinNav AI Loan Advisor API",
+    title="Credence AI Loan Advisor API",
     description="LangGraph + ChromaDB Grounded RAG backend for verified Indian retail loans",
     version="1.0.0"
 )
@@ -68,7 +68,7 @@ class EMIRequest(BaseModel):
 async def health_check():
     return {
         "status": "ok",
-        "service": "FinNav Loan Advisor API",
+        "service": "Credence Loan Advisor API",
         "verified_schemes": len(ALL_SCHEMES),
         "institutions": 34,
         "model": model_name,

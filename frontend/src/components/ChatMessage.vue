@@ -9,7 +9,7 @@
         <div 
           v-if="message.role === 'assistant'" 
           class="w-8 h-8 rounded-lg bg-brand text-white flex items-center justify-center font-bold text-xs shadow-sm border border-brand/20"
-          title="FinNav AI Advisor"
+          title="Credence AI Advisor"
         >
           <Sparkles class="w-4 h-4 text-sage-light" />
         </div>
@@ -28,7 +28,7 @@
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2 flex-wrap">
             <span class="font-bold text-sm text-brand-deep">
-              {{ message.role === 'assistant' ? 'FinNav Advisor' : 'You' }}
+              {{ message.role === 'assistant' ? 'Credence Advisor' : 'You' }}
             </span>
 
             <!-- Intent Badge -->

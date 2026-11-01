@@ -150,7 +150,7 @@
             class="bg-brand hover:bg-brand-hover text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm flex items-center gap-1.5 whitespace-nowrap"
           >
             <Sparkles class="w-3.5 h-3.5 text-sage-light" />
-            <span>Ask FinNav to Compare in Detail</span>
+            <span>Ask Credence to Compare in Detail</span>
           </button>
         </div>
       </div>

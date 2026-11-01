@@ -7,7 +7,7 @@
       <div class="max-w-3xl mb-10">
         <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-secondary border border-surface-border text-xs font-semibold text-brand mb-3">
           <BookOpen class="w-3.5 h-3.5" />
-          <span>FinNav Learn — Borrow Better. Understand More.</span>
+          <span>Credence Learn — Borrow Better. Understand More.</span>
         </div>
         <h1 class="text-3xl sm:text-4xl font-bold font-serif text-brand-deep mb-2">
           Everything you should know before taking a loan.
@@ -65,7 +65,7 @@
             <button 
               @click="discussInAdvisor(art)"
               class="text-xs text-brand-muted hover:text-brand flex items-center gap-1 font-medium"
-              title="Discuss with FinNav Advisor"
+              title="Discuss with Credence Advisor"
             >
               <Sparkles class="w-3 h-3 text-sage" />
               <span>Ask Advisor</span>
@@ -121,7 +121,7 @@
             class="bg-brand hover:bg-brand-hover text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm flex items-center gap-2 whitespace-nowrap"
           >
             <Sparkles class="w-3.5 h-3.5 text-sage-light" />
-            <span>Discuss with FinNav Advisor</span>
+            <span>Discuss with Credence Advisor</span>
           </button>
         </div>
       </div>

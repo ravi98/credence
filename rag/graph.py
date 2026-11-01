@@ -41,7 +41,7 @@ with open(MANIFEST_PATH, "r", encoding="utf-8") as f:
 engine = LoanRecommendationEngine()
 
 # Ultra-concise, token-efficient system instruction
-SYSTEM_PROMPT = """You are FinNav, an expert, concise Indian Retail Loan Advisor.
+SYSTEM_PROMPT = """You are Credence, an expert, concise Indian Retail Loan Advisor.
 CORE RULES:
 1. Conversation Context: Maintain strict continuity across turns. Refer back to discussed categories, income levels, and schemes naturally.
 2. Ultra-Concise: Provide 2-4 clean, direct bullet points (under 130 words). No verbose filler greetings.

@@ -30,7 +30,7 @@
           <div class="flex items-center gap-2">
             <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-secondary border border-surface-border text-xs font-semibold text-brand">
               <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
-              <span>FinNav Advisor</span>
+              <span>Credence Advisor</span>
               <span class="text-brand-muted">·</span>
               <span class="font-mono text-[11px]">{{ apiStatus.model || 'Qwen 3.8' }}</span>
             </div>
@@ -388,7 +388,7 @@ const submitQuery = async () => {
     console.error('Chat request failed:', error)
     cur.messages[assistantMsgIndex] = {
       role: 'assistant',
-      content: `⚠️ **Connection Error**: Unable to reach FinNav API. Please verify the backend server is running.\n\n*Error details: ${error.message}*`,
+      content: `⚠️ **Connection Error**: Unable to reach Credence API. Please verify the backend server is running.\n\n*Error details: ${error.message}*`,
       intent: 'ERROR',
       candidates: [],
       loading: false
