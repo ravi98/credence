@@ -16,32 +16,32 @@
       </router-link>
 
       <!-- Desktop Navigation Links -->
-      <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-brand-deep">
+      <nav class="hidden md:flex items-center gap-7 text-sm font-medium text-brand-deep h-16">
         <router-link 
           to="/explore" 
-          class="hover:text-brand transition py-1"
-          active-class="text-brand font-semibold border-b-2 border-brand"
+          class="hover:text-brand transition py-5 border-b-2 border-transparent"
+          active-class="text-brand font-semibold !border-brand"
         >
           Explore Loans
         </router-link>
         <router-link 
           to="/compare" 
-          class="hover:text-brand transition py-1"
-          active-class="text-brand font-semibold border-b-2 border-brand"
+          class="hover:text-brand transition py-5 border-b-2 border-transparent"
+          active-class="text-brand font-semibold !border-brand"
         >
           Compare
         </router-link>
         <router-link 
           to="/learn" 
-          class="hover:text-brand transition py-1"
-          active-class="text-brand font-semibold border-b-2 border-brand"
+          class="hover:text-brand transition py-5 border-b-2 border-transparent"
+          active-class="text-brand font-semibold !border-brand"
         >
           Learn
         </router-link>
         <router-link 
           to="/calculators/emi" 
-          class="hover:text-brand transition py-1"
-          active-class="text-brand font-semibold border-b-2 border-brand"
+          class="hover:text-brand transition py-5 border-b-2 border-transparent"
+          active-class="text-brand font-semibold !border-brand"
         >
           Calculators
         </router-link>

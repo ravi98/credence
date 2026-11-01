@@ -4,26 +4,26 @@
 
     <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
       <div class="max-w-3xl mb-8">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-secondary border border-surface-border text-xs font-semibold text-brand mb-3">
-          <Scale class="w-3.5 h-3.5" />
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-secondary border border-surface-border text-xs sm:text-sm font-semibold text-brand mb-3">
+          <Scale class="w-4 h-4" />
           <span>Side-by-Side Evaluation</span>
         </div>
-        <h1 class="text-3xl font-bold font-serif text-brand-deep mb-2">
+        <h1 class="text-3xl sm:text-4xl font-bold font-serif text-brand-deep mb-2">
           Compare Loan Schemes
         </h1>
-        <p class="text-sm text-brand-muted">
+        <p class="text-sm sm:text-base text-brand-muted leading-relaxed">
           Select up to 3 verified products to evaluate benchmark spreads, rate ranges, and maximum tenures side-by-side.
         </p>
       </div>
 
       <!-- Quick Preset Comparisons -->
-      <div class="mb-6 flex items-center gap-2 flex-wrap">
-        <span class="text-xs font-semibold text-brand-muted">Popular Comparisons:</span>
+      <div class="mb-6 flex items-center gap-2.5 flex-wrap">
+        <span class="text-xs sm:text-sm font-bold text-brand-muted">Popular Comparisons:</span>
         <button
           v-for="(preset, i) in presets"
           :key="i"
           @click="loadPreset(preset)"
-          class="text-xs bg-white hover:bg-surface-light border border-surface-border text-brand px-3 py-1 rounded-full transition font-medium"
+          class="text-xs sm:text-sm bg-white hover:bg-surface-light border border-surface-border text-brand px-3.5 py-1.5 rounded-full transition font-semibold shadow-2xs"
         >
           {{ preset.label }}
         </button>
@@ -34,16 +34,16 @@
         <div 
           v-for="index in [0, 1, 2]" 
           :key="index"
-          class="bg-white p-4 rounded-xl border border-surface-border shadow-xs"
+          class="bg-white p-4 sm:p-5 rounded-2xl border border-surface-border shadow-xs"
         >
           <div class="flex items-center justify-between mb-2">
-            <span class="text-xs font-semibold uppercase tracking-wider text-brand-muted">
+            <span class="text-xs sm:text-sm font-bold uppercase tracking-wider text-brand-muted">
               Loan {{ index + 1 }}
             </span>
             <button 
               v-if="selectedSchemes[index]" 
               @click="removeSlot(index)"
-              class="text-xs text-brand-muted hover:text-red-600 transition"
+              class="text-xs sm:text-sm text-brand-muted hover:text-red-600 transition font-medium"
             >
               Change
             </button>
@@ -52,7 +52,7 @@
           <select 
             :value="selectedSchemes[index]?.compact_key || ''"
             @change="onSelectScheme(index, $event.target.value)"
-            class="w-full bg-surface-canvas border border-surface-border rounded-lg px-3 py-2 text-xs text-brand-deep focus:outline-none focus:border-brand font-medium truncate"
+            class="w-full bg-surface-canvas border border-surface-border rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-brand-deep focus:outline-none focus:border-brand font-semibold truncate"
           >
             <option value="">-- Choose a Bank Scheme --</option>
             <option 
@@ -67,73 +67,73 @@
       </div>
 
       <!-- Side-by-Side Comparison Table -->
-      <div v-if="activeSelectedCount > 0" class="bg-white rounded-xl border border-surface-border shadow-sm overflow-hidden mb-8">
+      <div v-if="activeSelectedCount > 0" class="bg-white rounded-2xl border border-surface-border shadow-sm overflow-hidden mb-8">
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs sm:text-sm">
+          <table class="w-full text-left text-sm sm:text-base min-w-[640px]">
             <thead class="bg-surface-secondary text-brand-deep border-b border-surface-border">
               <tr>
-                <th class="p-4 w-1/4 font-bold text-xs uppercase tracking-wider text-brand-muted">Feature</th>
+                <th class="p-4 sm:p-5 min-w-[140px] sm:min-w-[180px] font-bold text-xs sm:text-sm uppercase tracking-wider text-brand-muted">Feature</th>
                 <th 
                   v-for="(s, idx) in activeSchemesList" 
                   :key="idx" 
-                  class="p-4 w-1/4 font-bold text-brand-deep border-l border-surface-border"
+                  class="p-4 sm:p-5 min-w-[200px] sm:min-w-[240px] font-bold text-brand-deep border-l border-surface-border"
                 >
-                  <div class="text-xs font-medium text-brand">{{ s.institution }}</div>
-                  <div class="text-sm font-bold text-brand-deep">{{ s.scheme_name }}</div>
+                  <div class="text-xs sm:text-sm font-semibold text-brand">{{ s.institution }}</div>
+                  <div class="text-base sm:text-lg font-bold text-brand-deep leading-snug">{{ s.scheme_name }}</div>
                 </th>
               </tr>
             </thead>
             <tbody class="divide-y divide-surface-border text-brand-deep">
               <tr>
-                <td class="p-4 font-semibold text-brand-muted bg-surface-canvas/50">Category</td>
-                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 border-l border-surface-border font-medium">
+                <td class="p-4 sm:p-5 font-bold text-brand-muted bg-surface-canvas/50">Category</td>
+                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 sm:p-5 border-l border-surface-border font-medium">
                   {{ s.category }}
                 </td>
               </tr>
               <tr>
-                <td class="p-4 font-semibold text-brand-muted bg-surface-canvas/50">Banking Sector</td>
-                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 border-l border-surface-border">
+                <td class="p-4 sm:p-5 font-bold text-brand-muted bg-surface-canvas/50">Banking Sector</td>
+                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 sm:p-5 border-l border-surface-border">
                   {{ s.sector }}
                 </td>
               </tr>
               <tr>
-                <td class="p-4 font-semibold text-brand-muted bg-surface-canvas/50">Interest Rate Range</td>
-                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 border-l border-surface-border font-bold font-tabular text-brand">
+                <td class="p-4 sm:p-5 font-bold text-brand-muted bg-surface-canvas/50">Interest Rate Range</td>
+                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 sm:p-5 border-l border-surface-border font-bold font-tabular text-brand text-base sm:text-lg">
                   {{ s.interest_rate_range || 'Contact lender' }}
                 </td>
               </tr>
               <tr>
-                <td class="p-4 font-semibold text-brand-muted bg-surface-canvas/50">Benchmark</td>
-                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 border-l border-surface-border font-medium">
+                <td class="p-4 sm:p-5 font-bold text-brand-muted bg-surface-canvas/50">Benchmark</td>
+                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 sm:p-5 border-l border-surface-border font-semibold">
                   {{ s.benchmark || 'EBLR / MCLR' }}
                 </td>
               </tr>
               <tr>
-                <td class="p-4 font-semibold text-brand-muted bg-surface-canvas/50">Max Tenure</td>
-                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 border-l border-surface-border">
+                <td class="p-4 sm:p-5 font-bold text-brand-muted bg-surface-canvas/50">Max Tenure</td>
+                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 sm:p-5 border-l border-surface-border font-medium">
                   {{ s.max_tenure_years ? `${s.max_tenure_years} Years` : 'Not specified' }}
                 </td>
               </tr>
               <tr>
-                <td class="p-4 font-semibold text-brand-muted bg-surface-canvas/50">Maximum Quantum</td>
-                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 border-l border-surface-border font-tabular">
+                <td class="p-4 sm:p-5 font-bold text-brand-muted bg-surface-canvas/50">Maximum Quantum</td>
+                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 sm:p-5 border-l border-surface-border font-tabular font-medium">
                   {{ s.max_loan_amount || 'Subject to FOIR' }}
                 </td>
               </tr>
               <tr>
-                <td class="p-4 font-semibold text-brand-muted bg-surface-canvas/50">Official Bank Filing</td>
-                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 border-l border-surface-border">
+                <td class="p-4 sm:p-5 font-bold text-brand-muted bg-surface-canvas/50">Official Bank Filing</td>
+                <td v-for="(s, idx) in activeSchemesList" :key="idx" class="p-4 sm:p-5 border-l border-surface-border">
                   <a 
                     v-if="s.source_url" 
                     :href="s.source_url" 
                     target="_blank" 
                     rel="noopener noreferrer"
-                    class="text-xs font-semibold text-brand hover:underline flex items-center gap-1"
+                    class="text-xs sm:text-sm font-bold text-brand hover:underline flex items-center gap-1.5"
                   >
                     <span>View Official Portal</span>
-                    <ExternalLink class="w-3 h-3" />
+                    <ExternalLink class="w-3.5 h-3.5" />
                   </a>
-                  <span v-else class="text-brand-muted text-xs">Verified in catalog</span>
+                  <span v-else class="text-brand-muted text-xs sm:text-sm">Verified in catalog</span>
                 </td>
               </tr>
             </tbody>
@@ -141,15 +141,15 @@
         </div>
 
         <!-- Deep AI Analysis CTA -->
-        <div class="p-4 bg-surface-canvas border-t border-surface-border flex flex-col sm:flex-row justify-between items-center gap-3">
-          <div class="text-xs text-brand-muted">
+        <div class="p-5 bg-surface-canvas border-t border-surface-border flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div class="text-xs sm:text-sm text-brand-muted">
             Want a nuanced trade-off analysis of processing fees, foreclosure rules, and qualification ceilings?
           </div>
           <button 
             @click="compareInAdvisor"
-            class="bg-brand hover:bg-brand-hover text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm flex items-center gap-1.5 whitespace-nowrap"
+            class="bg-brand hover:bg-brand-hover text-white text-xs sm:text-sm font-bold px-5 py-2.5 rounded-xl transition shadow-sm flex items-center gap-2 whitespace-nowrap"
           >
-            <Sparkles class="w-3.5 h-3.5 text-sage-light" />
+            <Sparkles class="w-4 h-4 text-sage-light" />
             <span>Ask Credence to Compare in Detail</span>
           </button>
         </div>
@@ -247,4 +247,3 @@ onMounted(async () => {
   }
 })
 </script>
-

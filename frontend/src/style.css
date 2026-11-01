@@ -6,6 +6,32 @@
   .font-tabular {
     font-variant-numeric: tabular-nums;
   }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
+/* Generic Layout & Text Wrapping Safety Net */
+*, ::before, ::after {
+  box-sizing: border-box;
+}
+
+/* Ensure all text elements wrap smoothly rather than overflowing their containers */
+p, span, h1, h2, h3, h4, h5, h6, a, label, li, dt, dd, th, td {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+/* Universal flex/grid container safety: force items to honor parent width */
+.grid > *, .flex > * {
+  min-width: 0;
 }
 
 /* Custom Scrollbars */
@@ -27,14 +53,17 @@
   background: rgba(30, 45, 57, 0.28);
 }
 
-/* Light-first Markdown typography */
+/* Light-first Markdown typography - Calibrated for Comfort & Clarity */
 .markdown-body {
-  line-height: 1.62;
+  font-size: 0.975rem; /* ~15.6px */
+  line-height: 1.68;
   color: #1E2D39;
+  word-break: break-word;
+  overflow-wrap: break-word;
 }
 
 .markdown-body p {
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.85rem;
 }
 
 .markdown-body p:last-child {
@@ -45,25 +74,30 @@
 .markdown-body h2, 
 .markdown-body h3, 
 .markdown-body h4 {
-  font-weight: 600;
-  margin-top: 1.15rem;
-  margin-bottom: 0.45rem;
+  font-weight: 700;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
   color: #1E2D39;
+  letter-spacing: -0.01em;
+}
+
+.markdown-body h1 {
+  font-size: 1.45rem;
 }
 
 .markdown-body h2 {
-  font-size: 1.15rem;
+  font-size: 1.28rem;
 }
 
 .markdown-body h3 {
-  font-size: 1.05rem;
+  font-size: 1.15rem;
 }
 
 .markdown-body ul, 
 .markdown-body ol {
-  margin-top: 0.4rem;
-  margin-bottom: 0.75rem;
-  padding-left: 1.4rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.85rem;
+  padding-left: 1.5rem;
 }
 
 .markdown-body ul {
@@ -75,34 +109,40 @@
 }
 
 .markdown-body li {
-  margin-bottom: 0.35rem;
+  margin-bottom: 0.4rem;
 }
 
+/* Responsive Table Wrapper & Cell Layout */
 .markdown-body table {
+  display: block;
   width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
   border-collapse: separate;
   border-spacing: 0;
-  margin-top: 0.75rem;
-  margin-bottom: 1rem;
-  border-radius: 0.5rem;
-  overflow: hidden;
+  margin-top: 0.9rem;
+  margin-bottom: 1.1rem;
+  border-radius: 0.6rem;
   border: 1px solid #DDE4E7;
-  font-size: 0.875rem;
+  font-size: 0.925rem; /* ~14.8px */
 }
 
 .markdown-body th {
   background-color: #EEF2F4;
   font-weight: 600;
   text-align: left;
-  padding: 0.65rem 0.9rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid #DDE4E7;
   color: #1E2D39;
+  white-space: nowrap;
 }
 
 .markdown-body td {
-  padding: 0.65rem 0.9rem;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid #EEF2F4;
   color: #1E2D39;
+  min-width: 120px;
 }
 
 .markdown-body tr:last-child td {
@@ -115,34 +155,37 @@
 
 .markdown-body code {
   background-color: #EEF2F4;
-  padding: 0.15rem 0.35rem;
-  border-radius: 0.25rem;
+  padding: 0.2rem 0.45rem;
+  border-radius: 0.3rem;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-  font-size: 0.85em;
+  font-size: 0.88em;
   color: #2D526E;
-  font-weight: 500;
+  font-weight: 600;
+  word-break: break-all;
 }
 
 .markdown-body pre {
   background-color: #1E2D39;
-  padding: 0.9rem 1.1rem;
-  border-radius: 0.5rem;
+  padding: 1rem 1.25rem;
+  border-radius: 0.6rem;
   overflow-x: auto;
   border: 1px solid #DDE4E7;
-  margin-top: 0.75rem;
-  margin-bottom: 0.75rem;
+  margin-top: 0.85rem;
+  margin-bottom: 0.85rem;
 }
 
 .markdown-body pre code {
   background: transparent;
   padding: 0;
   color: #F7F8F6;
+  word-break: normal;
 }
 
 .markdown-body a {
   color: #315E7A;
   text-decoration: underline;
   text-underline-offset: 3px;
+  font-weight: 500;
 }
 
 .markdown-body a:hover {
@@ -150,9 +193,9 @@
 }
 
 .markdown-body blockquote {
-  border-left: 3px solid #2D526E;
-  padding-left: 0.85rem;
+  border-left: 3.5px solid #2D526E;
+  padding-left: 1rem;
   color: #63727C;
-  margin: 0.75rem 0;
+  margin: 0.85rem 0;
   font-style: italic;
 }

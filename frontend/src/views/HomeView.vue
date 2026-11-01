@@ -53,13 +53,13 @@
         </div>
 
         <!-- Quick Suggestions -->
-        <div class="flex items-center gap-2 mt-3 text-xs text-brand-muted flex-wrap">
-          <span class="font-medium text-brand-deep">Try:</span>
+        <div class="flex items-center gap-2 mt-3.5 text-xs sm:text-sm text-brand-muted flex-wrap">
+          <span class="font-bold text-brand-deep">Try:</span>
           <button 
             v-for="(p, i) in samplePrompts" 
             :key="i"
             @click="selectPrompt(p)"
-            class="text-brand-link hover:underline text-left truncate max-w-[200px]"
+            class="text-brand-link hover:underline text-left font-medium bg-surface-secondary/70 hover:bg-surface-secondary px-2.5 py-1 rounded-md border border-surface-border transition"
           >
             "{{ p }}"
           </button>

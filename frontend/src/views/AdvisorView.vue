@@ -14,55 +14,56 @@
     <!-- Main Central Conversation Workspace -->
     <main class="flex-1 flex flex-col h-full min-w-0 relative">
       <!-- Top Application Header -->
-      <header class="h-14 border-b border-surface-border flex items-center justify-between px-4 bg-white/90 backdrop-blur z-10">
-        <div class="flex items-center gap-3">
+      <header class="h-16 border-b border-surface-border flex items-center justify-between px-4 sm:px-6 bg-white/95 backdrop-blur z-10 flex-shrink-0">
+        <div class="flex items-center gap-2.5 sm:gap-3 min-w-0">
           <!-- Toggle Sidebar -->
           <button 
             @click="sidebarOpen = !sidebarOpen"
-            class="p-2 text-brand-muted hover:text-brand-deep rounded-lg hover:bg-surface-secondary transition"
-            :title="sidebarOpen ? 'Hide sidebar' : 'Show sidebar'"
+            class="p-2 text-brand-muted hover:text-brand-deep rounded-lg hover:bg-surface-secondary transition flex-shrink-0"
+            :title="sidebarOpen ? 'Hide navigation' : 'Show navigation'"
           >
             <PanelLeftOpen v-if="!sidebarOpen" class="w-5 h-5" />
-            <PanelLeftClose v-else class="w-5 h-5 md:hidden" />
+            <PanelLeftClose v-else class="w-5 h-5" />
           </button>
 
           <!-- Model & System Info Pill -->
-          <div class="flex items-center gap-2">
-            <div class="flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-secondary border border-surface-border text-xs font-semibold text-brand">
-              <span class="w-2 h-2 rounded-full bg-sage animate-pulse"></span>
-              <span>Credence Advisor</span>
-              <span class="text-brand-muted">·</span>
-              <span class="font-mono text-[11px]">{{ apiStatus.model || 'Qwen 3.8' }}</span>
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-secondary border border-surface-border text-xs sm:text-sm font-semibold text-brand truncate">
+              <span class="w-2.5 h-2.5 rounded-full bg-sage animate-pulse flex-shrink-0"></span>
+              <span class="truncate">Credence Advisor</span>
+              <span class="text-brand-muted hidden xs:inline">·</span>
+              <span class="font-mono text-xs hidden xs:inline">{{ apiStatus.model || 'Qwen 3.8' }}</span>
             </div>
             
-            <div class="hidden sm:flex items-center gap-1 text-[11px] text-brand-muted">
-              <span class="px-2 py-0.5 rounded bg-white border border-surface-border">163 Verified Schemes</span>
+            <div class="hidden lg:flex items-center gap-1 text-xs text-brand-muted font-medium flex-shrink-0">
+              <span class="px-2.5 py-1 rounded-md bg-white border border-surface-border">163 Verified Schemes</span>
             </div>
           </div>
         </div>
 
         <!-- Top Right Actions -->
-        <div class="flex items-center gap-2">
+        <div class="flex items-center gap-2 sm:gap-2.5 flex-shrink-0">
           <!-- Clear current screen -->
           <button 
             v-if="activeSession.messages.length > 0"
             @click="clearCurrentChat" 
-            class="text-xs text-brand-muted hover:text-brand-deep px-2.5 py-1.5 rounded-md hover:bg-surface-secondary transition flex items-center gap-1.5"
+            class="text-xs sm:text-sm text-brand-muted hover:text-brand-deep px-2.5 sm:px-3 py-1.5 rounded-md hover:bg-surface-secondary transition flex items-center gap-1.5 font-medium"
             title="Clear current messages"
           >
-            <Eraser class="w-3.5 h-3.5" />
-            <span class="hidden sm:inline">Clear Chat</span>
+            <Eraser class="w-4 h-4" />
+            <span class="hidden sm:inline">Clear</span>
           </button>
 
           <!-- Borrower Profile Drawer Toggle Button -->
           <button 
             @click="profileDrawerOpen = !profileDrawerOpen"
-            class="text-xs font-semibold px-3 py-1.5 rounded-lg border transition shadow-2xs flex items-center gap-1.5"
+            class="text-xs sm:text-sm font-semibold px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg border transition shadow-2xs flex items-center gap-2"
             :class="hasCustomFilters ? 'bg-surface-light border-brand/30 text-brand' : 'bg-white border-surface-border text-brand-deep hover:bg-surface-secondary'"
           >
-            <SlidersHorizontal class="w-3.5 h-3.5 text-brand" />
-            <span>Profile & Filters</span>
-            <span v-if="hasCustomFilters" class="w-1.5 h-1.5 rounded-full bg-brand"></span>
+            <SlidersHorizontal class="w-4 h-4 text-brand" />
+            <span class="hidden xs:inline">Profile & Filters</span>
+            <span class="xs:hidden">Filters</span>
+            <span v-if="hasCustomFilters" class="w-2 h-2 rounded-full bg-brand"></span>
           </button>
         </div>
       </header>
@@ -73,7 +74,7 @@
         class="flex-1 overflow-y-auto overflow-x-hidden scroll-smooth relative"
       >
         <!-- First-Time Welcome Screen -->
-        <div v-if="activeSession.messages.length === 0" class="h-full flex items-center justify-center">
+        <div v-if="activeSession.messages.length === 0" class="min-h-full py-10 px-4 flex flex-col items-center justify-center">
           <AdvisorWelcome 
             @select-prompt="handlePromptSelect"
             @select-category="handleCategorySelect"
@@ -81,7 +82,7 @@
         </div>
 
         <!-- Message Stream -->
-        <div v-else class="pb-36 pt-4">
+        <div v-else class="pb-48 sm:pb-56 pt-4">
           <ChatMessage 
             v-for="(msg, idx) in activeSession.messages" 
             :key="idx" 
@@ -94,10 +95,10 @@
       </div>
 
       <!-- Bottom Docked Floating Input Bar -->
-      <div class="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-surface-canvas via-surface-canvas/95 to-transparent pointer-events-none">
+      <div class="absolute bottom-0 left-0 right-0 p-3 sm:p-5 bg-gradient-to-t from-surface-canvas via-surface-canvas/95 to-transparent pointer-events-none">
         <div class="max-w-3xl mx-auto pointer-events-auto">
           <!-- Textarea Input Box -->
-          <div class="relative bg-white rounded-2xl border border-surface-border shadow-md focus-within:border-brand/40 transition-all p-2 flex items-end gap-2">
+          <div class="relative bg-white rounded-2xl border border-surface-border shadow-md focus-within:border-brand/40 transition-all p-2.5 flex items-end gap-2.5">
             <textarea
               ref="textareaRef"
               v-model="inputQuery"
@@ -105,13 +106,13 @@
               @input="adjustTextareaHeight"
               rows="1"
               placeholder="Ask about interest rates, compare bank schemes, or calculate EMIs..."
-              class="flex-1 bg-transparent border-0 text-brand-deep placeholder-brand-muted/70 text-sm px-3 py-2.5 resize-none focus:outline-none max-h-48 leading-relaxed font-sans"
+              class="flex-1 bg-transparent border-0 text-brand-deep placeholder-brand-muted/70 text-sm sm:text-base px-3 py-2 sm:px-3.5 sm:py-2.5 resize-none focus:outline-none max-h-48 leading-relaxed font-sans"
             ></textarea>
 
             <button
               @click="submitQuery"
               :disabled="!canSubmit"
-              class="w-9 h-9 rounded-xl flex items-center justify-center transition flex-shrink-0 mb-0.5 shadow-sm"
+              class="w-10 h-10 rounded-xl flex items-center justify-center transition flex-shrink-0 mb-0.5 shadow-sm"
               :class="canSubmit ? 'bg-brand text-white hover:bg-brand-hover cursor-pointer' : 'bg-surface-secondary text-brand-muted/40 cursor-not-allowed'"
               title="Send message"
             >
@@ -120,7 +121,7 @@
           </div>
 
           <!-- Legal / Precision Disclaimer -->
-          <p class="text-center text-[11px] text-brand-muted mt-2 px-2">
+          <p class="text-center text-xs text-brand-muted mt-2 px-2 truncate sm:whitespace-normal">
             Strictly grounded on official filings from RBI, SBI, HDFC, and 34 lenders. Deterministic calculations.
           </p>
         </div>
@@ -184,7 +185,7 @@ const activeSessionId = ref('')
 
 const loadStoredSessions = () => {
   try {
-    const raw = localStorage.getItem('finnav_sessions')
+    const raw = localStorage.getItem('credence_sessions') || localStorage.getItem('finnav_sessions')
     if (raw) {
       const parsed = JSON.parse(raw)
       if (Array.isArray(parsed) && parsed.length > 0) {
@@ -202,7 +203,7 @@ const loadStoredSessions = () => {
 
 const saveSessions = () => {
   try {
-    localStorage.setItem('finnav_sessions', JSON.stringify(sessions.value))
+    localStorage.setItem('credence_sessions', JSON.stringify(sessions.value))
   } catch (e) {
     console.error('Failed to save sessions:', e)
   }
@@ -429,4 +430,3 @@ onMounted(async () => {
   }
 })
 </script>
-

@@ -5,38 +5,38 @@
     <main class="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 w-full">
       <!-- Header -->
       <div class="max-w-3xl mb-8">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-secondary border border-surface-border text-xs font-semibold text-brand mb-3">
-          <Layers class="w-3.5 h-3.5" />
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-surface-secondary border border-surface-border text-xs sm:text-sm font-semibold text-brand mb-3">
+          <Layers class="w-4 h-4" />
           <span>Verified Indian Loan Catalog</span>
         </div>
-        <h1 class="text-3xl font-bold font-serif text-brand-deep mb-2">
+        <h1 class="text-3xl sm:text-4xl font-bold font-serif text-brand-deep mb-2">
           Explore 163 Bank Schemes
         </h1>
-        <p class="text-sm text-brand-muted">
+        <p class="text-sm sm:text-base text-brand-muted leading-relaxed">
           Compare interest rates, benchmarks, and quantum limits across 34 top Indian banks & NBFCs. Grounded directly on verified filings.
         </p>
       </div>
 
       <!-- Filters & Search Toolbar -->
-      <div class="bg-white p-4 rounded-xl border border-surface-border shadow-xs mb-8 flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
+      <div class="bg-white p-4 sm:p-5 rounded-2xl border border-surface-border shadow-xs mb-8 flex flex-col md:flex-row gap-4 justify-between items-stretch md:items-center">
         <!-- Search Input -->
         <div class="relative flex-1 max-w-md">
-          <Search class="w-4 h-4 text-brand-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search class="w-4.5 h-4.5 text-brand-muted absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input 
             v-model="searchQuery"
             @input="fetchSchemes"
             type="text" 
             placeholder="Search by bank name, scheme, or feature (e.g. SBI, Scholar, Doctor)..."
-            class="w-full pl-10 pr-4 py-2 bg-surface-canvas border border-surface-border rounded-lg text-xs sm:text-sm text-brand-deep placeholder-brand-muted/70 focus:outline-none focus:border-brand"
+            class="w-full pl-11 pr-4 py-2.5 bg-surface-canvas border border-surface-border rounded-xl text-sm sm:text-base text-brand-deep placeholder-brand-muted/70 focus:outline-none focus:border-brand"
           />
         </div>
 
         <!-- Category & Sector Filters -->
-        <div class="flex items-center gap-2 flex-wrap">
+        <div class="flex items-center gap-2.5 flex-wrap">
           <select 
             v-model="selectedCategory" 
             @change="fetchSchemes"
-            class="bg-surface-canvas border border-surface-border rounded-lg px-3 py-2 text-xs text-brand-deep focus:outline-none focus:border-brand font-medium"
+            class="bg-surface-canvas border border-surface-border rounded-xl px-3.5 py-2.5 text-sm text-brand-deep focus:outline-none focus:border-brand font-semibold"
           >
             <option value="All">All Categories</option>
             <option value="Home Loan">Home Loan</option>
@@ -48,7 +48,7 @@
           <select 
             v-model="selectedSector" 
             @change="fetchSchemes"
-            class="bg-surface-canvas border border-surface-border rounded-lg px-3 py-2 text-xs text-brand-deep focus:outline-none focus:border-brand font-medium"
+            class="bg-surface-canvas border border-surface-border rounded-xl px-3.5 py-2.5 text-sm text-brand-deep focus:outline-none focus:border-brand font-semibold"
           >
             <option value="All">All Sectors</option>
             <option value="Public">Public Sector</option>
@@ -60,68 +60,85 @@
 
       <!-- Schemes Grid -->
       <div v-if="loading" class="py-16 text-center text-brand-muted">
-        <Loader2 class="w-6 h-6 animate-spin mx-auto mb-2 text-brand" />
-        <span class="text-sm">Retrieving catalog schemes...</span>
+        <Loader2 class="w-7 h-7 animate-spin mx-auto mb-2.5 text-brand" />
+        <span class="text-base font-medium">Retrieving catalog schemes...</span>
       </div>
 
-      <div v-else-if="schemes.length === 0" class="py-16 text-center text-brand-muted bg-white rounded-xl border border-surface-border">
-        <p class="text-sm font-medium">No matching loan schemes found.</p>
-        <p class="text-xs mt-1">Try broadening your search or resetting category filters.</p>
+      <div v-else-if="schemes.length === 0" class="py-16 text-center text-brand-muted bg-white rounded-2xl border border-surface-border p-8">
+        <p class="text-base font-semibold text-brand-deep">No matching loan schemes found.</p>
+        <p class="text-sm mt-1">Try broadening your search or resetting category filters.</p>
       </div>
 
       <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         <div 
           v-for="scheme in schemes" 
           :key="scheme.compact_key"
-          class="bg-white rounded-xl border border-surface-border hover:border-brand/40 hover:shadow-md transition p-5 flex flex-col justify-between"
+          class="bg-white rounded-2xl border border-surface-border hover:border-brand/40 hover:shadow-md transition p-5 sm:p-6 flex flex-col justify-between h-full"
         >
-          <div>
+          <div class="flex-1 flex flex-col">
             <!-- Top Tags -->
-            <div class="flex items-center justify-between text-xs mb-2">
-              <span class="font-semibold text-brand px-2 py-0.5 rounded bg-surface-light border border-brand/20">
+            <div class="flex items-center justify-between text-xs sm:text-sm mb-3">
+              <span class="font-bold text-brand px-2.5 py-1 rounded-md bg-surface-light border border-brand/20">
                 {{ scheme.category }}
               </span>
-              <span class="text-brand-muted text-[11px]">
+              <span class="text-brand-muted font-semibold">
                 {{ scheme.sector }} Sector
               </span>
             </div>
 
-            <!-- Title & Bank -->
-            <h3 class="text-base font-bold text-brand-deep mb-0.5">
-              {{ scheme.scheme_name }}
-            </h3>
-            <p class="text-xs text-brand-muted mb-4 font-medium">
-              {{ scheme.institution }}
-            </p>
+            <!-- Title & Bank with Normalized Height for Row Alignment -->
+            <div class="h-16 flex flex-col justify-start mb-3">
+              <h3 class="text-base sm:text-lg font-bold text-brand-deep leading-snug line-clamp-2" :title="scheme.scheme_name">
+                {{ scheme.scheme_name }}
+              </h3>
+              <p class="text-xs sm:text-sm text-brand-muted font-semibold mt-0.5 truncate">
+                {{ scheme.institution }}
+              </p>
+            </div>
 
-            <!-- Metrics -->
-            <div class="grid grid-cols-2 gap-2 p-3 rounded-lg bg-surface-canvas border border-surface-border text-xs mb-4">
-              <div>
-                <span class="text-[11px] text-brand-muted block">Interest Rate:</span>
-                <span class="font-bold font-tabular text-brand-deep">{{ scheme.interest_rate_range || 'Subject to risk' }}</span>
+            <!-- Metrics Box with Clean Scannability & Zero Overflow -->
+            <div class="p-3.5 sm:p-4 rounded-xl bg-surface-canvas border border-surface-border text-xs sm:text-sm mb-4 space-y-2.5 flex-1 flex flex-col justify-center">
+              <!-- Top Highlight Row: Rate & Tenure -->
+              <div class="flex items-baseline justify-between gap-2 pb-2.5 border-b border-surface-border">
+                <div class="min-w-0">
+                  <span class="text-[11px] uppercase tracking-wider text-brand-muted block font-bold">Interest Rate</span>
+                  <span class="text-base sm:text-lg font-bold font-tabular text-brand leading-tight block">
+                    {{ scheme.interest_rate_range || 'Subject to risk' }}
+                  </span>
+                </div>
+                <div v-if="scheme.max_tenure_years" class="text-right flex-shrink-0">
+                  <span class="text-[11px] uppercase tracking-wider text-brand-muted block font-bold">Max Tenure</span>
+                  <span class="text-sm sm:text-base font-bold font-tabular text-brand-deep leading-tight block">
+                    {{ scheme.max_tenure_years }} Years
+                  </span>
+                </div>
               </div>
-              <div>
-                <span class="text-[11px] text-brand-muted block">Benchmark:</span>
-                <span class="font-medium text-brand-deep">{{ scheme.benchmark || 'EBLR / MCLR' }}</span>
+
+              <!-- Benchmark Row -->
+              <div class="flex items-start justify-between gap-3 text-xs sm:text-sm">
+                <span class="text-brand-muted font-medium flex-shrink-0">Benchmark:</span>
+                <span class="font-semibold text-brand-deep text-right break-words min-w-0">
+                  {{ scheme.benchmark || 'EBLR / MCLR' }}
+                </span>
               </div>
-              <div v-if="scheme.max_tenure_years">
-                <span class="text-[11px] text-brand-muted block">Max Tenure:</span>
-                <span class="font-medium">{{ scheme.max_tenure_years }} Years</span>
-              </div>
-              <div v-if="scheme.max_loan_amount">
-                <span class="text-[11px] text-brand-muted block">Max Quantum:</span>
-                <span class="font-medium truncate">{{ scheme.max_loan_amount }}</span>
+
+              <!-- Max Quantum Row -->
+              <div v-if="scheme.max_loan_amount" class="flex items-start justify-between gap-3 text-xs sm:text-sm">
+                <span class="text-brand-muted font-medium flex-shrink-0">Max Quantum:</span>
+                <span class="font-semibold text-brand-deep text-right break-words min-w-0">
+                  {{ scheme.max_loan_amount }}
+                </span>
               </div>
             </div>
           </div>
 
-          <!-- Bottom Actions -->
-          <div class="pt-3 border-t border-surface-border flex items-center justify-between gap-2">
+          <!-- Bottom Actions (Aligned Across Cards) -->
+          <div class="pt-3.5 border-t border-surface-border flex items-center justify-between gap-2 flex-shrink-0">
             <button 
               @click="askAdvisorAboutScheme(scheme)"
-              class="text-xs font-semibold text-brand hover:text-brand-hover flex items-center gap-1.5 transition"
+              class="text-sm font-bold text-brand hover:text-brand-hover flex items-center gap-1.5 transition"
             >
-              <Sparkles class="w-3.5 h-3.5 text-sage" />
+              <Sparkles class="w-4 h-4 text-sage" />
               <span>Ask Credence</span>
             </button>
 
@@ -130,10 +147,10 @@
               :href="scheme.source_url" 
               target="_blank" 
               rel="noopener noreferrer"
-              class="text-xs text-brand-muted hover:text-brand-deep flex items-center gap-1 font-medium transition"
+              class="text-xs sm:text-sm text-brand-muted hover:text-brand-deep flex items-center gap-1 font-semibold transition"
             >
               <span>Bank Portal</span>
-              <ExternalLink class="w-3 h-3" />
+              <ExternalLink class="w-3.5 h-3.5" />
             </a>
           </div>
         </div>
@@ -200,4 +217,3 @@ onMounted(() => {
   fetchSchemes()
 })
 </script>
-
