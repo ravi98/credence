@@ -23,7 +23,7 @@
           </router-link>
           <button 
             @click="$emit('toggle-sidebar')" 
-            class="p-1.5 text-brand-muted hover:text-brand-deep rounded-lg hover:bg-surface-secondary transition"
+            class="p-1.5 text-brand-muted hover:text-brand-deep rounded-lg hover:bg-surface-secondary transition cursor-pointer"
             title="Close navigation"
           >
             <PanelLeftClose class="w-4.5 h-4.5" />
@@ -32,7 +32,7 @@
 
         <button 
           @click="$emit('new-chat')" 
-          class="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand hover:bg-brand-hover shadow-sm transition"
+          class="w-full flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-semibold text-white bg-brand hover:bg-brand-hover shadow-sm transition cursor-pointer"
         >
           <Plus class="w-4 h-4" />
           <span>New Conversation</span>
@@ -40,29 +40,29 @@
       </div>
 
       <!-- Recent Conversations List -->
-      <div class="flex-1 overflow-y-auto px-3.5 py-3 space-y-4">
+      <div class="flex-1 overflow-y-auto px-3 py-3 space-y-3">
         <div>
-          <div class="px-2 pb-2 text-[11px] font-bold uppercase tracking-wider text-brand-muted flex items-center justify-between">
+          <div class="px-2 pb-1.5 text-[11px] font-bold uppercase tracking-wider text-brand-muted flex items-center justify-between">
             <span>Recent Inquiries</span>
-            <span class="text-[10px] bg-surface-secondary text-brand-deep font-bold px-2 py-0.5 rounded">{{ sessions.length }}</span>
+            <span class="text-[11px] bg-surface-secondary px-2 py-0.5 rounded-md font-bold text-brand-deep">{{ sessions.length }}</span>
           </div>
           <div class="space-y-1">
             <div 
               v-for="s in sessions" 
               :key="s.id"
               @click="$emit('select-session', s.id)"
-              class="group flex items-center justify-between px-3 py-2 rounded-xl text-xs sm:text-sm cursor-pointer transition border"
+              class="group flex items-center justify-between px-3 py-2.5 rounded-xl text-xs sm:text-sm cursor-pointer transition border"
               :class="activeSessionId === s.id ? 'bg-surface-light text-brand font-semibold border-brand/20' : 'text-brand-deep hover:bg-surface-secondary border-transparent'"
             >
-              <div class="flex items-center gap-2.5 truncate min-w-0 flex-1">
+              <div class="flex items-center gap-2.5 truncate">
                 <MessageSquare class="w-4 h-4 flex-shrink-0 text-brand-icon" />
-                <span class="truncate block">{{ s.title || 'Loan Inquiry' }}</span>
+                <span class="truncate">{{ s.title || 'Loan Inquiry' }}</span>
               </div>
               <button 
-                v-if="sessions.length > 1" 
+                v-if="sessions.length > 1"
                 @click.stop="$emit('delete-session', s.id)"
-                class="opacity-0 group-hover:opacity-100 p-1 hover:text-red-600 transition flex-shrink-0 ml-1"
-                title="Delete conversation"
+                class="opacity-0 group-hover:opacity-100 p-1 text-brand-muted hover:text-red-500 rounded transition cursor-pointer"
+                title="Delete session"
               >
                 <Trash2 class="w-3.5 h-3.5" />
               </button>
@@ -106,6 +106,43 @@
         </div>
       </div>
 
+      <!-- User Account Section -->
+      <div class="p-3 border-t border-surface-border bg-white">
+        <!-- Logged in card -->
+        <div v-if="auth.isAuthenticated.value" class="flex items-center justify-between p-2 rounded-xl bg-surface-canvas border border-surface-border">
+          <div class="flex items-center gap-2.5 min-w-0">
+            <div class="w-7 h-7 rounded-lg bg-brand text-white flex items-center justify-center text-xs font-bold flex-shrink-0">
+              {{ getUserInitials(auth.user.value?.name) }}
+            </div>
+            <div class="min-w-0">
+              <p class="text-xs font-bold text-brand-deep truncate">{{ auth.user.value?.name }}</p>
+              <p class="text-[10px] text-brand-muted truncate">{{ auth.user.value?.email }}</p>
+            </div>
+          </div>
+          <button 
+            @click="auth.logout()" 
+            class="p-1.5 text-brand-muted hover:text-red-600 rounded-lg transition cursor-pointer"
+            title="Sign out"
+          >
+            <LogOut class="w-4 h-4" />
+          </button>
+        </div>
+
+        <!-- Logged out prompt -->
+        <div v-else class="p-2.5 rounded-xl bg-surface-light border border-brand/20">
+          <p class="text-[11px] text-brand-deep font-semibold mb-2">
+            Sign in to save your advisory sessions and compare rates.
+          </p>
+          <router-link 
+            to="/login?redirect=/advisor" 
+            class="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-brand hover:bg-brand-hover text-white text-xs font-bold transition shadow-2xs"
+          >
+            <LogIn class="w-3.5 h-3.5" />
+            <span>Sign In</span>
+          </router-link>
+        </div>
+      </div>
+
       <!-- Bottom Footer Metrics -->
       <div class="p-3.5 border-t border-surface-border bg-surface-canvas text-xs text-brand-muted">
         <div class="flex items-center justify-between mb-1">
@@ -136,8 +173,11 @@ import {
   Scale, 
   Calculator, 
   BookOpen, 
-  ShieldCheck 
+  ShieldCheck, 
+  LogIn, 
+  LogOut 
 } from 'lucide-vue-next'
+import { useAuth } from '../auth.js'
 
 defineProps({
   isOpen: {
@@ -160,4 +200,15 @@ defineEmits([
   'select-session', 
   'delete-session'
 ])
+
+const auth = useAuth()
+
+const getUserInitials = (name) => {
+  if (!name) return 'U'
+  const parts = name.trim().split(' ')
+  if (parts.length >= 2) {
+    return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase()
+  }
+  return name.slice(0, 2).toUpperCase()
+}
 </script>

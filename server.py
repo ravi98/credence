@@ -4,7 +4,7 @@ import os
 import uuid
 from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Header
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
@@ -16,6 +16,7 @@ groq_api_key = os.environ.get("GROQ_API_KEY")
 model_name = os.environ.get("MODEL_NAME", "qwen/qwen3.8-27b")
 
 from rag.graph import loan_advisor_graph
+import auth
 
 MANIFEST_PATH = os.path.join(os.path.dirname(__file__), "catalog_manifest.json")
 try:
@@ -64,6 +65,29 @@ class EMIRequest(BaseModel):
     rate: float = Field(..., gt=0, le=50, description="Annual interest rate percentage")
     tenure_years: float = Field(..., gt=0, le=40, description="Tenure in years")
 
+class RegisterRequest(BaseModel):
+    name: str = Field(..., min_length=2, max_length=100)
+    email: str = Field(..., min_length=5, max_length=150)
+    password: str = Field(..., min_length=6, max_length=100)
+
+class LoginRequest(BaseModel):
+    email: str
+    password: str
+
+class GoogleAuthRequest(BaseModel):
+    credential: str
+
+class AuthUser(BaseModel):
+    id: str
+    email: str
+    name: str
+    auth_provider: str
+    avatar_url: Optional[str] = None
+
+class AuthResponse(BaseModel):
+    token: str
+    user: AuthUser
+
 @app.get("/api/health")
 async def health_check():
     return {
@@ -73,6 +97,177 @@ async def health_check():
         "institutions": 34,
         "model": model_name,
         "groq_configured": bool(groq_api_key)
+    }
+
+# ==================== Authentication Endpoints ====================
+
+@app.post("/api/auth/register", response_model=AuthResponse)
+async def register_user(req: RegisterRequest):
+    email = req.email.strip().lower()
+    if "@" not in email or "." not in email:
+        raise HTTPException(status_code=400, detail="Invalid email format.")
+
+    existing = auth.get_user_by_email(email)
+    if existing:
+        # If user registered with Google previously without a password, link the password
+        if existing.get("google_id") and not existing.get("password_hash"):
+            pwd_hash = auth.hash_password(req.password)
+            conn = auth.get_db()
+            cursor = conn.cursor()
+            cursor.execute("UPDATE users SET password_hash = ?, auth_provider = 'both' WHERE id = ?", (pwd_hash, existing["id"]))
+            conn.commit()
+            conn.close()
+            updated = auth.get_user_by_id(existing["id"])
+            token = auth.create_access_token(updated["id"], updated["email"], updated["name"])
+            return AuthResponse(
+                token=token,
+                user=AuthUser(
+                    id=updated["id"],
+                    email=updated["email"],
+                    name=updated["name"],
+                    auth_provider=updated.get("auth_provider", "both"),
+                    avatar_url=updated.get("avatar_url")
+                )
+            )
+        raise HTTPException(status_code=400, detail="An account with this email already exists.")
+
+    user = auth.create_user(
+        email=email,
+        name=req.name.strip(),
+        password=req.password,
+        auth_provider="email"
+    )
+    token = auth.create_access_token(user["id"], user["email"], user["name"])
+    return AuthResponse(
+        token=token,
+        user=AuthUser(
+            id=user["id"],
+            email=user["email"],
+            name=user["name"],
+            auth_provider=user["auth_provider"],
+            avatar_url=user.get("avatar_url")
+        )
+    )
+
+@app.post("/api/auth/login", response_model=AuthResponse)
+async def login_user(req: LoginRequest):
+    email = req.email.strip().lower()
+    user = auth.get_user_by_email(email)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid email or password.")
+
+    if not user.get("password_hash"):
+        raise HTTPException(
+            status_code=400, 
+            detail="This account was registered using Google. Please sign in with 'Continue with Google'."
+        )
+
+    if not auth.verify_password(req.password, user["password_hash"]):
+        raise HTTPException(status_code=401, detail="Invalid email or password.")
+
+    token = auth.create_access_token(user["id"], user["email"], user["name"])
+    return AuthResponse(
+        token=token,
+        user=AuthUser(
+            id=user["id"],
+            email=user["email"],
+            name=user["name"],
+            auth_provider=user.get("auth_provider", "email"),
+            avatar_url=user.get("avatar_url")
+        )
+    )
+
+@app.post("/api/auth/google", response_model=AuthResponse)
+async def google_auth(req: GoogleAuthRequest):
+    if not req.credential:
+        raise HTTPException(status_code=400, detail="Missing Google credential token.")
+
+    try:
+        google_profile = auth.verify_google_credential(req.credential)
+    except Exception as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    email = google_profile["email"].strip().lower()
+    google_id = google_profile.get("google_id")
+
+    # Step 1: Check if already recognized by google_id
+    existing = None
+    if google_id:
+        existing = auth.get_user_by_google_id(google_id)
+
+    # Step 2: If not found by google_id, check if user exists by verified email
+    if not existing:
+        existing = auth.get_user_by_email(email)
+        if existing and google_id:
+            # Seamlessly link this Google identity to the existing user record
+            existing = auth.link_google_account(
+                user_id=existing["id"],
+                google_id=google_id,
+                avatar_url=google_profile.get("avatar_url")
+            )
+
+    # Step 3: If user exists (previously linked or freshly linked to existing email)
+    if existing:
+        token = auth.create_access_token(existing["id"], existing["email"], existing["name"])
+        return AuthResponse(
+            token=token,
+            user=AuthUser(
+                id=existing["id"],
+                email=existing["email"],
+                name=existing["name"],
+                auth_provider=existing.get("auth_provider", "google"),
+                avatar_url=existing.get("avatar_url") or google_profile.get("avatar_url")
+            )
+        )
+
+    # Step 4: Completely new user registering via Google
+    new_user = auth.create_user(
+        email=email,
+        name=google_profile.get("name", "Google User"),
+        password=None,
+        auth_provider="google",
+        google_id=google_id,
+        avatar_url=google_profile.get("avatar_url")
+    )
+    token = auth.create_access_token(new_user["id"], new_user["email"], new_user["name"])
+    return AuthResponse(
+        token=token,
+        user=AuthUser(
+            id=new_user["id"],
+            email=new_user["email"],
+            name=new_user["name"],
+            auth_provider="google",
+            avatar_url=new_user.get("avatar_url")
+        )
+    )
+
+@app.get("/api/auth/me", response_model=AuthUser)
+async def get_current_user_profile(authorization: Optional[str] = Header(None)):
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Authentication required.")
+
+    token = authorization.split(" ")[1]
+    claims = auth.decode_access_token(token)
+    if not claims or not claims.get("sub"):
+        raise HTTPException(status_code=401, detail="Invalid or expired token.")
+
+    user = auth.get_user_by_id(claims["sub"])
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found.")
+
+    return AuthUser(
+        id=user["id"],
+        email=user["email"],
+        name=user["name"],
+        auth_provider=user.get("auth_provider", "email"),
+        avatar_url=user.get("avatar_url")
+    )
+
+@app.get("/api/auth/google/config")
+async def get_google_auth_config():
+    client_id = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
+    return {
+        "google_client_id": client_id
     }
 
 @app.get("/api/presets")

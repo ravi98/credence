@@ -5,12 +5,18 @@ import ExploreView from '../views/ExploreView.vue'
 import CompareView from '../views/CompareView.vue'
 import LearnView from '../views/LearnView.vue'
 import EmiCalculatorView from '../views/EmiCalculatorView.vue'
+import LoginView from '../views/LoginView.vue'
 
 const routes = [
   {
     path: '/',
     name: 'Home',
     component: HomeView
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: LoginView
   },
   {
     path: '/advisor',
