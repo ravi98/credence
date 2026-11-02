@@ -6,6 +6,7 @@ import CompareView from '../views/CompareView.vue'
 import LearnView from '../views/LearnView.vue'
 import EmiCalculatorView from '../views/EmiCalculatorView.vue'
 import LoginView from '../views/LoginView.vue'
+import MyEnquiriesView from '../views/MyEnquiriesView.vue'
 
 const routes = [
   {
@@ -17,6 +18,11 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: LoginView
+  },
+  {
+    path: '/my-enquiries',
+    name: 'MyEnquiries',
+    component: MyEnquiriesView
   },
   {
     path: '/advisor',

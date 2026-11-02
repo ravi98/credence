@@ -1,5 +1,4 @@
 import os
-import sqlite3
 import uuid
 import json
 import base64
@@ -8,42 +7,15 @@ from typing import Optional, Dict, Any
 import bcrypt
 import jwt
 from dotenv import load_dotenv
+from sqlalchemy.orm import Session
+from sqlalchemy import func
+
+from database import SessionLocal
+from models.user import User, UserRole
 
 load_dotenv()
 
-DB_PATH = os.path.join(os.path.dirname(__file__), "credence_auth.db")
 JWT_SECRET = os.environ.get("JWT_SECRET", "credence-super-secure-jwt-signing-secret-key-32bytes-min")
-GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "")
-
-def get_db():
-    conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-def init_db():
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-        CREATE TABLE IF NOT EXISTS users (
-            id TEXT PRIMARY KEY,
-            email TEXT UNIQUE NOT NULL,
-            name TEXT NOT NULL,
-            password_hash TEXT,
-            auth_provider TEXT NOT NULL DEFAULT 'email',
-            google_id TEXT,
-            avatar_url TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    """)
-    cursor.execute("""
-        CREATE INDEX IF NOT EXISTS idx_users_google_id ON users (google_id);
-    """)
-    conn.commit()
-    conn.close()
-
-# Initialize DB table on module load
-init_db()
-
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", "").strip()
 
 def hash_password(password: str) -> str:
@@ -56,12 +28,13 @@ def verify_password(password: str, hashed: str) -> bool:
     except Exception:
         return False
 
-def create_access_token(user_id: str, email: str, name: str) -> str:
+def create_access_token(user_id: str, email: str, name: str, role: str = "CUSTOMER") -> str:
     now = datetime.now(timezone.utc)
     payload = {
         "sub": user_id,
         "email": email,
         "name": name,
+        "role": str(role.value if isinstance(role, UserRole) else role),
         "iat": now,
         "exp": now + timedelta(days=14)
     }
@@ -73,85 +46,91 @@ def decode_access_token(token: str) -> Optional[Dict[str, Any]]:
     except Exception:
         return None
 
-def get_user_by_email(email: str) -> Optional[Dict[str, Any]]:
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE LOWER(email) = LOWER(?)", (email.strip(),))
-    row = cursor.fetchone()
-    conn.close()
-    if row:
-        return dict(row)
-    return None
+def get_user_by_email(email: str, db: Optional[Session] = None) -> Optional[User]:
+    clean_email = email.strip().lower()
+    if db is not None:
+        return db.query(User).filter(func.lower(User.email) == clean_email).first()
+    with SessionLocal() as session:
+        return session.query(User).filter(func.lower(User.email) == clean_email).first()
 
-def get_user_by_google_id(google_id: str) -> Optional[Dict[str, Any]]:
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE google_id = ?", (google_id,))
-    row = cursor.fetchone()
-    conn.close()
-    if row:
-        return dict(row)
-    return None
+def get_user_by_google_id(google_id: str, db: Optional[Session] = None) -> Optional[User]:
+    if db is not None:
+        return db.query(User).filter(User.google_id == google_id).first()
+    with SessionLocal() as session:
+        return session.query(User).filter(User.google_id == google_id).first()
 
-def get_user_by_id(user_id: str) -> Optional[Dict[str, Any]]:
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("SELECT * FROM users WHERE id = ?", (user_id,))
-    row = cursor.fetchone()
-    conn.close()
-    if row:
-        return dict(row)
-    return None
+def get_user_by_id(user_id: str, db: Optional[Session] = None) -> Optional[User]:
+    if db is not None:
+        return db.query(User).filter(User.id == user_id).first()
+    with SessionLocal() as session:
+        return session.query(User).filter(User.id == user_id).first()
 
-def link_google_account(user_id: str, google_id: str, avatar_url: Optional[str] = None) -> Dict[str, Any]:
+def link_google_account(
+    user_id: str,
+    google_id: str,
+    avatar_url: Optional[str] = None,
+    db: Optional[Session] = None
+) -> Optional[User]:
     """
     Links an existing user account with a Google OAuth ID.
     If the user previously registered with email/password, auth_provider becomes 'both'.
     """
-    conn = get_db()
-    cursor = conn.cursor()
-    cursor.execute("""
-        UPDATE users 
-        SET google_id = ?, 
-            avatar_url = COALESCE(avatar_url, ?),
-            auth_provider = CASE 
-                WHEN password_hash IS NOT NULL THEN 'both' 
-                ELSE 'google' 
-            END
-        WHERE id = ?
-    """, (google_id, avatar_url, user_id))
-    conn.commit()
-    conn.close()
-    return get_user_by_id(user_id)
+    def _perform_link(session: Session) -> Optional[User]:
+        user = session.query(User).filter(User.id == user_id).first()
+        if not user:
+            return None
+        user.google_id = google_id
+        if avatar_url and not user.avatar_url:
+            user.avatar_url = avatar_url
+        if user.password_hash:
+            user.auth_provider = "both"
+        else:
+            user.auth_provider = "google"
+        session.commit()
+        session.refresh(user)
+        return user
+
+    if db is not None:
+        return _perform_link(db)
+    with SessionLocal() as session:
+        return _perform_link(session)
 
 def create_user(
     email: str,
     name: str,
     password: Optional[str] = None,
+    role: UserRole = UserRole.CUSTOMER,
     auth_provider: str = "email",
     google_id: Optional[str] = None,
-    avatar_url: Optional[str] = None
-) -> Dict[str, Any]:
-    conn = get_db()
-    cursor = conn.cursor()
+    avatar_url: Optional[str] = None,
+    db: Optional[Session] = None
+) -> User:
     user_id = f"usr_{uuid.uuid4().hex[:12]}"
     pwd_hash = hash_password(password) if password else None
+    clean_email = email.strip().lower()
+    clean_name = name.strip()
 
-    cursor.execute("""
-        INSERT INTO users (id, email, name, password_hash, auth_provider, google_id, avatar_url)
-        VALUES (?, ?, ?, ?, ?, ?, ?)
-    """, (user_id, email.strip().lower(), name.strip(), pwd_hash, auth_provider, google_id, avatar_url))
-    conn.commit()
-    conn.close()
+    new_user = User(
+        id=user_id,
+        email=clean_email,
+        name=clean_name,
+        password_hash=pwd_hash,
+        role=role,
+        auth_provider=auth_provider,
+        google_id=google_id,
+        avatar_url=avatar_url
+    )
 
-    return {
-        "id": user_id,
-        "email": email.strip().lower(),
-        "name": name.strip(),
-        "auth_provider": auth_provider,
-        "google_id": google_id,
-        "avatar_url": avatar_url
-    }
+    def _perform_create(session: Session) -> User:
+        session.add(new_user)
+        session.commit()
+        session.refresh(new_user)
+        return new_user
+
+    if db is not None:
+        return _perform_create(db)
+    with SessionLocal() as session:
+        return _perform_create(session)
 
 def verify_google_credential(credential: str) -> Dict[str, Any]:
     """

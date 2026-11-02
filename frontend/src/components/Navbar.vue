@@ -90,6 +90,14 @@
               <Sparkles class="w-3.5 h-3.5 text-sage" />
               <span>Loan Advisory Sessions</span>
             </router-link>
+            <router-link 
+              to="/my-enquiries" 
+              @click="userMenuOpen = false"
+              class="flex items-center gap-2 px-4 py-2 text-xs font-medium text-brand-deep hover:bg-surface-secondary transition"
+            >
+              <FileText class="w-3.5 h-3.5 text-brand" />
+              <span>My Loan Enquiries</span>
+            </router-link>
             <button 
               @click="handleLogout"
               class="w-full flex items-center gap-2 px-4 py-2 text-xs font-semibold text-red-600 hover:bg-red-50 transition text-left cursor-pointer"
@@ -190,7 +198,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { Landmark, Sparkles, Menu, X, ChevronDown, LogOut } from 'lucide-vue-next'
+import { Landmark, Sparkles, Menu, X, ChevronDown, LogOut, FileText } from 'lucide-vue-next'
 import { useAuth } from '../auth.js'
 
 const router = useRouter()

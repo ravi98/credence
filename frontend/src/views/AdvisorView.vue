@@ -88,6 +88,7 @@
             :key="idx" 
             :message="msg"
             @select-suggestion="handlePromptSelect"
+            @open-assistance="handleOpenAssistance"
           />
         </div>
 
@@ -136,6 +137,17 @@
       @update-profile="updateCurrentProfile"
       @reset="resetCurrentProfile"
     />
+
+    <!-- Loan Assistance Flow Sheet / Modal -->
+    <LoanAssistanceFlow
+      :is-open="assistanceFlowOpen"
+      :candidate="selectedAssistanceCandidate"
+      :all-candidates="selectedAssistanceCandidates"
+      :user-profile="activeSession.profile"
+      :conversation-id="activeSession.id"
+      @close="assistanceFlowOpen = false"
+      @submitted="handleAssistanceSubmitted"
+    />
   </div>
 </template>
 
@@ -153,11 +165,15 @@ import AdvisorSidebar from '../components/AdvisorSidebar.vue'
 import ProfileDrawer from '../components/ProfileDrawer.vue'
 import ChatMessage from '../components/ChatMessage.vue'
 import AdvisorWelcome from '../components/AdvisorWelcome.vue'
+import LoanAssistanceFlow from '../components/LoanAssistanceFlow.vue'
 
 const route = useRoute()
 
 const sidebarOpen = ref(true)
 const profileDrawerOpen = ref(false)
+const assistanceFlowOpen = ref(false)
+const selectedAssistanceCandidate = ref(null)
+const selectedAssistanceCandidates = ref([])
 const inputQuery = ref('')
 const isLoading = ref(false)
 const chatContainer = ref(null)
@@ -319,6 +335,28 @@ const handleCategorySelect = (categoryName) => {
   })
   inputQuery.value = `Recommend top ${categoryName} schemes`
   submitQuery()
+}
+
+const handleOpenAssistance = (data) => {
+  selectedAssistanceCandidate.value = data.candidate
+  selectedAssistanceCandidates.value = data.candidates || []
+  assistanceFlowOpen.value = true
+}
+
+const handleAssistanceSubmitted = (enquiry) => {
+  // Add a system feedback message into chat stream confirming submission
+  const cur = sessions.value.find(s => s.id === activeSessionId.value)
+  if (cur) {
+    cur.messages.push({
+      role: 'assistant',
+      content: `🎉 **Application Confirmed**: Your loan assistance inquiry for **${enquiry?.enquiry_reference || 'Credence Loan'}** has been logged successfully.\n\n*A Credence loan specialist will connect with you to review eligibility and coordinate bank sanctions.*`,
+      intent: 'RECOMMENDATION',
+      candidates: [],
+      loading: false
+    })
+    saveSessions()
+    scrollToBottom()
+  }
 }
 
 const submitQuery = async () => {

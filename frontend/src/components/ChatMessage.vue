@@ -98,6 +98,13 @@
           </div>
         </div>
 
+        <!-- Contextual Conversion CTA Card -->
+        <LoanConversionCard 
+          v-if="message.role === 'assistant' && !message.loading && message.candidates && message.candidates.length > 0"
+          :candidates="message.candidates"
+          @open-assistance="(cand) => $emit('open-assistance', { candidate: cand, candidates: message.candidates })"
+        />
+
         <!-- Contextual Follow-up Suggestions -->
         <div 
           v-if="message.role === 'assistant' && !message.loading && contextualSuggestions.length > 0"
@@ -136,6 +143,7 @@ import {
   CornerDownRight
 } from 'lucide-vue-next'
 import SourceCard from './SourceCard.vue'
+import LoanConversionCard from './LoanConversionCard.vue'
 
 const props = defineProps({
   message: {
@@ -144,7 +152,7 @@ const props = defineProps({
   }
 })
 
-defineEmits(['select-suggestion'])
+defineEmits(['select-suggestion', 'open-assistance'])
 
 const copied = ref(false)
 const sourcesOpen = ref(false)

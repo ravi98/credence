@@ -1,6 +1,27 @@
+# Python
 __pycache__/
+*.py[cod]
+*$py.class
 .venv/
+.pytest_cache/
+
+# Environment & Secrets
 .env*
+!.env.example
+
+# Vector DB & Local SQLite databases
 chroma_db/
-frontend/node_modules/
-frontend/dist/
+*.db
+*.db-journal
+*.sqlite
+*.sqlite3
+
+# Node & Frontend builds
+node_modules/
+*/node_modules/
+dist/
+*/dist/
+
+# OS files
+.DS_Store
+Thumbs.db
