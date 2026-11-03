@@ -1,14 +1,14 @@
 """Local Semantic Intent Router for Loan Advisory Agent.
-Uses an in-memory ephemeral ChromaDB vector collection to match natural language queries
-to conversational intents with zero token cost, zero API latency, and complete immunity to rate limits.
+Uses fast deterministic pattern matching and local in-memory vector collection
+to match natural language queries to conversational intents with zero token cost and zero API latency.
 """
 
 import re
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 import chromadb
 
 INTENT_UTTERANCES = [
-    # RECOMMENDATION: User seeking loan offers, rates, schemes, or advice on what to pick
+    # RECOMMENDATION / DISCOVERY
     ("can u share the affordable housing options", "RECOMMENDATION"),
     ("help me find lowest interest rate home loan for monthly income of 10k", "RECOMMENDATION"),
     ("recommend best personal loan for salaried employee", "RECOMMENDATION"),
@@ -22,8 +22,15 @@ INTENT_UTTERANCES = [
     ("which is the cheapest loan available", "RECOMMENDATION"),
     ("what loan can I take", "RECOMMENDATION"),
     ("give me recommendations", "RECOMMENDATION"),
+    ("I need a ₹1 crore home loan", "RECOMMENDATION"),
+    ("I need a 50 lakh home loan", "RECOMMENDATION"),
+    ("I'm salaried, earning ₹1.2 lakh monthly", "RECOMMENDATION"),
+    ("I have existing EMIs of ₹15,000", "RECOMMENDATION"),
+    ("I need an education loan for MS in the US", "RECOMMENDATION"),
+    ("I need an urgent personal loan of 5 lakhs", "RECOMMENDATION"),
+    ("I want a car loan for a new Hyundai Creta", "RECOMMENDATION"),
 
-    # ELIGIBILITY_QUERY: Inquiring about qualification, rules, income limits, documents, or criteria
+    # ELIGIBILITY_QUERY
     ("so can i get homeloan from these banks?", "ELIGIBILITY_QUERY"),
     ("can i get loan from these banks?", "ELIGIBILITY_QUERY"),
     ("do i qualify for these options?", "ELIGIBILITY_QUERY"),
@@ -32,56 +39,61 @@ INTENT_UTTERANCES = [
     ("tell me generic monthly income eligiblity for most of the home loans", "ELIGIBILITY_QUERY"),
     ("do I qualify for a loan with 10k salary", "ELIGIBILITY_QUERY"),
     ("what is the minimum salary required for home loan", "ELIGIBILITY_QUERY"),
+    ("what is the generic minimum salary required for home loans", "ELIGIBILITY_QUERY"),
     ("what are the eligibility criteria and age limit", "ELIGIBILITY_QUERY"),
     ("what documents are required for application", "ELIGIBILITY_QUERY"),
+    ("what documents are required for a salaried home loan", "ELIGIBILITY_QUERY"),
     ("what paperwork do I need", "ELIGIBILITY_QUERY"),
     ("am I eligible with 700 cibil score", "ELIGIBILITY_QUERY"),
-    ("is 10k monthly income enough to get approved", "ELIGIBILITY_QUERY"),
-    ("am I qualified for a home loan", "ELIGIBILITY_QUERY"),
     ("can I get approval with 10000 per month", "ELIGIBILITY_QUERY"),
-    ("what is the age limit for home loans", "ELIGIBILITY_QUERY"),
     ("salary requirement for personal loan", "ELIGIBILITY_QUERY"),
-    ("how much income is needed to get 50 lakhs", "ELIGIBILITY_QUERY"),
     ("who is eligible for this loan", "ELIGIBILITY_QUERY"),
 
-    # COMPARISON: Comparing two institutions or schemes
+    # COMPARISON
     ("compare SBI Scholar vs Canara Vidya Turant", "COMPARISON"),
     ("difference between HDFC and ICICI home loan", "COMPARISON"),
     ("which is better SBI or Axis Bank", "COMPARISON"),
     ("compare Kotak Fresh Home Loan versus Federal Bank Housing Loan", "COMPARISON"),
+    ("compare SBI Regular Home Loan vs HDFC Standard Home Loan", "COMPARISON"),
     ("SBI vs HDFC", "COMPARISON"),
     ("compare the two loans", "COMPARISON"),
 
-    # CONCEPT_FAQ: Banking concepts, RBI regulations, tax laws
+    # SPECIFIC_PRODUCT_QUERY
+    ("explain SBI MaxGain", "SPECIFIC_PRODUCT_QUERY"),
+    ("explain SBI MaxGain home loan and how the overdraft facility works", "SPECIFIC_PRODUCT_QUERY"),
+    ("what are the foreclosure conditions of HDFC Home Loan", "SPECIFIC_PRODUCT_QUERY"),
+    ("tell me about Baroda Advantage Home Loan", "SPECIFIC_PRODUCT_QUERY"),
+
+    # CONCEPT_FAQ
     ("what is eblr vs mclr", "CONCEPT_FAQ"),
+    ("what is foir and how do banks calculate it", "CONCEPT_FAQ"),
+    ("what does foir mean in banking", "CONCEPT_FAQ"),
     ("explain prepayment charges under rbi guidelines", "CONCEPT_FAQ"),
     ("what is section 80e tax deduction on education loan", "CONCEPT_FAQ"),
     ("what is cgfsel scheme for education loans", "CONCEPT_FAQ"),
-    ("what does foir mean in banking", "CONCEPT_FAQ"),
     ("what is repo rate linked lending rate", "CONCEPT_FAQ"),
-    ("what are the tax benefits on home loan", "CONCEPT_FAQ"),
 
-    # EMI_CALCULATOR: Mathematical installment requests
+    # EMI_CALCULATOR
     ("calculate emi for 20 lakhs at 8.5% for 20 years", "EMI_CALCULATOR"),
     ("what is the monthly installment for 50L loan", "EMI_CALCULATOR"),
     ("calculate my emi", "EMI_CALCULATOR"),
     ("what will be my emi for 15 lakhs", "EMI_CALCULATOR"),
+    ("calculate emi for 50 lakh", "EMI_CALCULATOR"),
     ("calculate emi", "EMI_CALCULATOR"),
 
-    # META_CHAT: Conversational reflections, clarifications, and questions about prior turns
+    # META_CHAT / CHALLENGE
+    ("why wasn't Indian Bank recommended?", "META_CHAT"),
+    ("why didn't you suggest Indian Bank?", "META_CHAT"),
     ("why did u suggest then?", "META_CHAT"),
     ("why did you suggest then", "META_CHAT"),
     ("why did you say that", "META_CHAT"),
     ("why did u say that", "META_CHAT"),
     ("what do you mean by that", "META_CHAT"),
     ("can you clarify your previous response", "META_CHAT"),
-    ("why did you recommend them earlier", "META_CHAT"),
     ("explain why you suggested that", "META_CHAT")
 ]
 
 class SemanticIntentRouter:
-    """Zero-cost local intent classifier with lazy initialization and crash-proof fallback."""
-
     def __init__(self):
         self.collection = None
         self._chroma_failed = False
@@ -98,38 +110,56 @@ class SemanticIntentRouter:
             self.collection.add(documents=docs, metadatas=metas, ids=ids)
         except Exception as e:
             self._chroma_failed = True
-            print(f"⚠️ ChromaDB ephemeral router disabled ({e}). Running on resilient native semantic matcher.")
 
     def route(self, query: str) -> str:
-        """Determines conversational intent using fast deterministic paths followed by local semantic matching."""
         q = (query or "").lower().strip()
 
-        # 1. Meta-Conversation Fast-Path (Reflections & Clarifications on prior turns)
+        # 1. Meta-Conversation & Challenge Fast-Path
         meta_keywords = [
-            "why did you suggest", "why did u suggest", "why did you say", "why did u say",
-            "why did you recommend", "why did u recommend", "what do you mean", "what did you mean",
-            "clarify your", "why then", "explain your answer", "explain why you", "you contradicted"
+            "why wasn't", "why was not", "why didn't you", "why did not you", "why did u suggest",
+            "why did you suggest", "why did you say", "why did u say", "why did you recommend",
+            "what do you mean", "clarify your", "explain why you", "you contradicted"
         ]
         if any(k in q for k in meta_keywords):
             return "META_CHAT"
 
-        # 2. Regulatory & FAQ Fast-Path
+        # 2. Specific Product Query Fast-Path (e.g. "Explain SBI MaxGain", "how does overdraft work")
+        if any(k in q for k in ["explain sbi maxgain", "sbi maxgain", "overdraft facility"]):
+            return "SPECIFIC_PRODUCT_QUERY"
+
+        # 3. Regulatory & Concept Fast-Path
         if any(k in q for k in ["eblr vs mclr", "mclr vs eblr", "what is eblr", "what is mclr", "rbi guidelines", "section 80e", "cgfsel", "what is foir"]):
             return "CONCEPT_FAQ"
 
-        # 3. Anaphoric Eligibility Checks ("can i get from these banks", "do i qualify for them")
+        # 4. Pure EMI Calculation (Only if explicitly asking to calculate, and NOT declaring existing EMIs or salary)
+        is_calc_query = any(k in q for k in ["calculate emi", "what is the emi", "calculate my emi", "monthly installment for", "emi for "])
+        is_profile_declaration = any(k in q for k in ["i have existing emi", "existing emi of", "other emi", "my income is", "i'm salaried", "im salaried", "earning"])
+        if is_calc_query and not is_profile_declaration:
+            return "EMI_CALCULATOR"
+
+        # 5. Anaphoric Eligibility Checks or Documentation Queries
+        if any(k in q for k in ["what documents", "paperwork", "kyc required", "minimum salary required", "generic minimum salary"]):
+            return "ELIGIBILITY_QUERY"
         if any(p in q for p in ["can i get", "am i eligible", "do i qualify", "will i get", "will they approve"]) and any(b in q for b in ["these", "this", "them", "both", "it"]):
             return "ELIGIBILITY_QUERY"
 
-        # 4. EMI Calculator Fast-Path
-        if any(k in q for k in ["calculate emi", "what is the emi", "calculate my emi", "monthly installment", "emi for "]):
-            return "EMI_CALCULATOR"
-
-        # 5. Comparison Fast-Path
+        # 6. Comparison Fast-Path
         if any(k in q for k in [" vs ", " vs. ", "versus", "difference between", "better than"]):
             return "COMPARISON"
 
-        # 6. Local ChromaDB Vector Similarity Routing (if available)
+        # 7. Clarification Answer / Parameter Declaration Fast-Path
+        # Prevents short responses (e.g. "20 Years (240 mo)", "₹50 - ₹75 Lakhs") from being misrouted to EMI calculator or FAQs
+        if any(re.search(pat, q) for pat in [
+            r"^\s*\d+\s*(?:years?|yrs?|yr|months?|mo)\b",
+            r"\b(?:years?|months?)\s*\(\d+\s*mo\)",
+            r"^\s*₹?\d+.*(?:cr|crore|lakh|lac|l|k)\b",
+            r"^\s*(?:salaried|self-employed|professional)\b",
+            r"^\s*(?:lowest\s*total\s*interest|lowest\s*monthly\s*installment|lower\s*emi|fastest\s*sanction|minimal\s*fees)\b",
+            r"^\s*looking\s*for.*loan"
+        ]):
+            return "RECOMMENDATION"
+
+        # 8. Local ChromaDB Vector Similarity
         self._ensure_collection()
         if self.collection is not None:
             try:
@@ -139,7 +169,7 @@ class SemanticIntentRouter:
             except Exception:
                 pass
 
-        # 7. Resilient Native Token-Overlap Similarity Matcher (Zero Dependencies)
+        # 8. Token-overlap matcher fallback
         q_words = set(q.split())
         best_score = 0.0
         best_intent = "RECOMMENDATION"
@@ -157,5 +187,4 @@ class SemanticIntentRouter:
 
         return "RECOMMENDATION"
 
-# Singleton instance for fast in-process routing
 semantic_router = SemanticIntentRouter()

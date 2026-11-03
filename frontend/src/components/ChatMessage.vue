@@ -72,6 +72,13 @@
           v-html="renderedContent"
         ></div>
 
+        <!-- Interactive Clarification Underwriting Card -->
+        <ClarificationCard 
+          v-if="message.role === 'assistant' && !message.loading && message.response_type === 'CLARIFICATION' && message.clarification && message.clarification.next_questions && message.clarification.next_questions.length > 0"
+          :clarification="message.clarification"
+          @select-option="(opt) => $emit('select-suggestion', opt)"
+        />
+
         <!-- Verified Source Fact Checks (ChromaDB Grounding) -->
         <div 
           v-if="message.role === 'assistant' && message.candidates && message.candidates.length > 0" 
@@ -144,6 +151,7 @@ import {
 } from 'lucide-vue-next'
 import SourceCard from './SourceCard.vue'
 import LoanConversionCard from './LoanConversionCard.vue'
+import ClarificationCard from './ClarificationCard.vue'
 
 const props = defineProps({
   message: {
@@ -168,7 +176,10 @@ const copyText = async () => {
 
 const renderedContent = computed(() => {
   if (!props.message.content) return ''
-  const rawHtml = marked.parse(props.message.content)
+  let text = props.message.content
+  // Sanitize any raw **svg** or svg markdown artifacts
+  text = text.replace(/\*\*svg\*\*/gi, '')
+  const rawHtml = marked.parse(text)
   return DOMPurify.sanitize(rawHtml)
 })
 
@@ -210,6 +221,14 @@ const contextualSuggestions = computed(() => {
 })
 
 const badgeInfo = computed(() => {
+  if (props.message.response_type === 'CLARIFICATION') {
+    return {
+      label: 'Consultative Clarification',
+      icon: '💡',
+      colorClass: 'bg-amber-50 text-amber-900 border-amber-300'
+    }
+  }
+
   const intent = props.message.intent
   if (!intent) return null
 

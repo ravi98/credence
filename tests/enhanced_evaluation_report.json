@@ -1,0 +1,832 @@
+[
+  {
+    "scenario_id": "SCENARIO_01_SILENT_TENURE_ASSUMPTION",
+    "category": "Financial Assumption",
+    "title": "Query with loan quantum but unstated tenure and income",
+    "expected_behavior": "Should recognize Home Loan and amount (1 Cr). Should NOT assume tenure or interest rate. Should NOT present premature personalized EMI. Should ask clarifying questions.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "I need a \u20b91 crore home loan.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": 10000000.0,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for \u20b910,000,000 without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n2. **What is your net monthly take-home salary or income?**\n   *Options*: `\u20b935,000 \u2013 \u20b960,000` | `\u20b960,000 \u2013 \u20b91 Lakh` | `\u20b91 Lakh \u2013 \u20b91.8 Lakhs` | `\u20b92 Lakhs+`"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_02_EMI_WITHOUT_TENURE_OR_RATE",
+    "category": "Financial Assumption",
+    "title": "EMI calculation query missing tenure and rate",
+    "expected_behavior": "Should ask for tenure and interest rate, or present a clearly labeled illustrative scenario table across multiple tenures. Should never silently assume 5 years or 8.75%.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "Calculate EMI for \u20b950 lakh.",
+        "detected_intent": "EMI_CALCULATOR",
+        "response_type": "EMI_RESULT",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": false,
+        "clarification_summary": null,
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": null,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Self-Employed Professional",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "Illustrative EMI Breakdown for \u20b95,000,000 (at current ~8.5% EBLR benchmark):\n*(Exact interest rate and tenure depend on your credit score, employer category, and chosen bank)*\n\n| Tenure | Monthly EMI | Total Interest Payable | Total Repayment |\n|---|---|---|---|\n| 15 Years (180 mo) | \u20b949,237 | \u20b93,862,656 | \u20b98,862,656 |\n| 20 Years (240 mo) | \u20b943,391 | \u20b95,413,879 | \u20b910,413,879 |\n| 25 Years (300 mo) | \u20b940,261 | \u20b97,078,406 | \u20b912,078,406 |\n| 30 Years (360 mo) | \u20b938,446 | \u20b98,840,443 | \u20b913,840,443 |\n\nWhat repayment tenure (in years) would be comfortable for you?"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_03_EXISTING_OBLIGATIONS_HANDLING",
+    "category": "Financial Assumption",
+    "title": "Declared income with substantial existing EMIs",
+    "expected_behavior": "Must capture existing EMI obligations (\u20b920k) and net income (\u20b91.5L). Must calculate available FOIR headroom (max 50-60% minus 20k) rather than assuming zero debt.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "I earn \u20b91.5 lakh monthly and have \u20b920,000 in existing EMIs. Can I get a home loan?",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": null,
+          "preferred_tenure_months": null,
+          "monthly_net_income": 150000.0,
+          "existing_monthly_emi": null,
+          "employment_type": "Self-Employed Professional",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for your desired loan without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What is your approximate required home loan quantum?**\n   *Options*: `\u20b925 \u2013 \u20b940 Lakhs` | `\u20b950 \u2013 \u20b975 Lakhs` | `\u20b975 Lakhs \u2013 \u20b91.2 Cr` | `\u20b91.5 Crore+`\n2. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_04_MULTI_TURN_REQUIREMENT_PERSISTENCE",
+    "category": "Conversation State",
+    "title": "Progressive multi-turn requirement discovery",
+    "expected_behavior": "All 3 details (amount=50L, employment=Salaried, income=1.2L, existing_emi=15k) must persist across turns without resetting or forgetting prior turns.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "I need a \u20b950 lakh home loan.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": 5000000.0,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n2. **What is your net monthly take-home salary or income?**\n   *Options*: `\u20b935,000 \u2013 \u20b960,000` | `\u20b960,000 \u2013 \u20b91 Lakh` | `\u20b91 Lakh \u2013 \u20b91.8 Lakhs` | `\u20b92 Lakhs+`"
+      },
+      {
+        "turn_index": 2,
+        "user_query": "I'm salaried, earning \u20b91.2 lakh monthly.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 3,
+          "loan_category": "Home Loan",
+          "requested_amount": 5000000.0,
+          "preferred_tenure_months": null,
+          "monthly_net_income": 120000.0,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n2. **Approximately what are your existing monthly EMI commitments?**\n   *Options*: `Zero / No existing EMIs` | `Under \u20b915,000 / month` | `\u20b915,000 \u2013 \u20b930,000 / month` | `\u20b930,000+ / month`"
+      },
+      {
+        "turn_index": 3,
+        "user_query": "I have existing EMIs of \u20b915,000.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 3,
+          "loan_category": "Home Loan",
+          "requested_amount": 5000000.0,
+          "preferred_tenure_months": null,
+          "monthly_net_income": 120000.0,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n2. **Approximately what are your existing monthly EMI commitments?**\n   *Options*: `Zero / No existing EMIs` | `Under \u20b915,000 / month` | `\u20b915,000 \u2013 \u20b930,000 / month` | `\u20b930,000+ / month`"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_05_EXPLICIT_CORRECTION_HANDLING",
+    "category": "Conversation State",
+    "title": "Customer corrects previously stated financial figure",
+    "expected_behavior": "Should gracefully acknowledge the correction, update income to \u20b91.5 lakh, and not retain the old \u20b91.2 lakh figure in subsequent calculations.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "My monthly income is \u20b91.2 lakh, looking for 40 lakh loan.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": 4000000.0,
+          "preferred_tenure_months": null,
+          "monthly_net_income": 120000.0,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for \u20b94,000,000 without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n2. **Approximately what are your existing monthly EMI commitments?**\n   *Options*: `Zero / No existing EMIs` | `Under \u20b915,000 / month` | `\u20b915,000 \u2013 \u20b930,000 / month` | `\u20b930,000+ / month`"
+      },
+      {
+        "turn_index": 2,
+        "user_query": "Actually, my income is \u20b91.5 lakh, not \u20b91.2 lakh.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 3,
+          "loan_category": "Home Loan",
+          "requested_amount": 4000000.0,
+          "preferred_tenure_months": null,
+          "monthly_net_income": 150000.0,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for \u20b94,000,000 without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n2. **Approximately what are your existing monthly EMI commitments?**\n   *Options*: `Zero / No existing EMIs` | `Under \u20b915,000 / month` | `\u20b915,000 \u2013 \u20b930,000 / month` | `\u20b930,000+ / month`"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_06_UNKNOWN_CIBIL_TOLERANCE",
+    "category": "Conversation State",
+    "title": "Customer does not know their credit score",
+    "expected_behavior": "Should continue discovery with an appropriate limitation note. Should never block the user or invent a random score (e.g. 750).",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "I want to explore home loans around 45 lakhs, salary 90k, but I don't know my CIBIL score.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": 4500000.0,
+          "preferred_tenure_months": null,
+          "monthly_net_income": 90000.0,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for \u20b94,500,000 without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n2. **Approximately what are your existing monthly EMI commitments?**\n   *Options*: `Zero / No existing EMIs` | `Under \u20b915,000 / month` | `\u20b915,000 \u2013 \u20b930,000 / month` | `\u20b930,000+ / month`"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_07_LENDER_DIVERSITY_COVERAGE",
+    "category": "Candidate Retrieval",
+    "title": "Broad recommendation seeking public and private lenders",
+    "expected_behavior": "Should explore the broader 163-scheme catalog and present diverse public/private options rather than repeatedly returning the same top 2 Chroma chunks.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "Find suitable home loans from public and private banks for 60 lakh loan.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": 6000000.0,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for \u20b96,000,000 without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n2. **What is your net monthly take-home salary or income?**\n   *Options*: `\u20b935,000 \u2013 \u20b960,000` | `\u20b960,000 \u2013 \u20b91 Lakh` | `\u20b91 Lakh \u2013 \u20b91.8 Lakhs` | `\u20b92 Lakhs+`"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_08_CHALLENGING_A_RECOMMENDATION",
+    "category": "Decision Trace",
+    "title": "Customer questions why a specific bank was omitted",
+    "expected_behavior": "Must not invent retrospective excuses (like 'I prefer private banks'). Must refer to actual retrieval boundary or criteria trace.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "Recommend top home loan options for \u20b975 lakh.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 3,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": null,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for your desired loan without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What is your approximate required home loan quantum?**\n   *Options*: `\u20b925 \u2013 \u20b940 Lakhs` | `\u20b950 \u2013 \u20b975 Lakhs` | `\u20b975 Lakhs \u2013 \u20b91.2 Cr` | `\u20b91.5 Crore+`\n2. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n3. **What is your net monthly take-home salary or income?**\n   *Options*: `\u20b935,000 \u2013 \u20b960,000` | `\u20b960,000 \u2013 \u20b91 Lakh` | `\u20b91 Lakh \u2013 \u20b91.8 Lakhs` | `\u20b92 Lakhs+`"
+      },
+      {
+        "turn_index": 2,
+        "user_query": "Why wasn't Indian Bank recommended?",
+        "detected_intent": "META_CHAT",
+        "response_type": "GENERAL_ANSWER",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": false,
+        "clarification_summary": null,
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": null,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "DECISION TRACE VERIFICATION:\nCustomer is asking why Indian Bank was not recommended in the earlier shortlist.\nExplain honestly based on recorded trace: Indian Bank was not included in the initial top 2 shortlist because the earlier candidates were selected based on the specific loan quantum and default ranking factors. Indian Bank offers competitive rates (starting at 7.25%\u20138.25%), and we can immediately evaluate it alongside your current options."
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_09_PREFERENCE_TOTAL_INTEREST_VS_EMI",
+    "category": "Ranking Engine",
+    "title": "Customer explicitly prioritizes lowest total interest cost",
+    "expected_behavior": "Should rank options prioritizing lowest interest rate and shorter tenure over maximum tenure options with lower monthly EMIs.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "I earn 1.5L and want a 50L home loan. I want the lowest total interest, not the lowest EMI.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": 5000000.0,
+          "preferred_tenure_months": null,
+          "monthly_net_income": 150000.0,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [
+            "LOWEST_TOTAL_INTEREST",
+            "LOWER_MONTHLY_EMI"
+          ],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n2. **Approximately what are your existing monthly EMI commitments?**\n   *Options*: `Zero / No existing EMIs` | `Under \u20b915,000 / month` | `\u20b915,000 \u2013 \u20b930,000 / month` | `\u20b930,000+ / month`"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_10_MAX_COMFORTABLE_EMI_CONSTRAINT",
+    "category": "Ranking Engine",
+    "title": "Customer sets an absolute ceiling on monthly EMI",
+    "expected_behavior": "Should calculate that a \u20b950L loan at 8.5% over 20 years requires ~\u20b943,391 EMI, which exceeds \u20b935k. Should guide user to increase tenure to 25-30 years or adjust loan quantum to ~\u20b940L.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "I can pay a maximum EMI of \u20b935,000 for a \u20b950 lakh home loan. What can I get?",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Home Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": 5000000.0,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Self-Employed Professional",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": 35000.0,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n2. **What is your net monthly take-home salary or income?**\n   *Options*: `\u20b935,000 \u2013 \u20b960,000` | `\u20b960,000 \u2013 \u20b91 Lakh` | `\u20b91 Lakh \u2013 \u20b91.8 Lakhs` | `\u20b92 Lakhs+`"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_11_GENERAL_EDUCATION_INTENT",
+    "category": "Intent Routing",
+    "title": "General financial/regulatory concept inquiry",
+    "expected_behavior": "Should answer directly with educational facts (Fixed Obligation to Income Ratio, 50% cap). Should NOT launch the full loan discovery questionnaire.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "What is FOIR and how do banks calculate it?",
+        "detected_intent": "CONCEPT_FAQ",
+        "response_type": "GENERAL_ANSWER",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": false,
+        "clarification_summary": null,
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": null,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Self-Employed Professional",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "FOIR (Fixed Obligation to Income Ratio) in Indian Banking:\n- Definition: The percentage of your net monthly income that goes toward servicing all active debts and EMIs (including credit cards, personal loans, and the new proposed loan).\n- Regulatory Cap: Indian banks strictly cap FOIR between 50% and 60% of net monthly salary.\n- Calculation Formula: `FOIR = (Total Existing EMIs + Proposed New EMI) / Net Monthly Income`.\n- Example: If your net income is \u20b91,00,000, your maximum allowed EMI outflow is \u20b950,000. If you already pay \u20b915,000 in existing EMIs, your maximum allowable new loan EMI is \u20b935,000."
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_12_SPECIFIC_PRODUCT_QUERY_INTENT",
+    "category": "Intent Routing",
+    "title": "Inquiry about a specific banking product feature",
+    "expected_behavior": "Should retrieve and explain the specific SBI MaxGain scheme and its savings account interest offset. Should NOT launch a borrower questionnaire.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "Explain SBI MaxGain home loan and how the overdraft facility works.",
+        "detected_intent": "SPECIFIC_PRODUCT_QUERY",
+        "response_type": "PRODUCT_DETAILS",
+        "candidates_count": 1,
+        "candidates_summary": [
+          "Bank of India (BOI) - BOI Star Smart Home Loan"
+        ],
+        "has_clarification": false,
+        "clarification_summary": null,
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": null,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "SPECIFIC PRODUCT ADVISORY:\nCustomer is inquiring about a specific loan product feature (e.g. SBI MaxGain overdraft facility).\nExplain factually how this specific facility operates: parking surplus cash in the linked overdraft account reduces daily principal interest burden while retaining complete withdrawal liquidity.\nDo NOT launch a borrower questionnaire for an informational product inquiry.\n\nRetrieved Product: BOI Star Smart Home Loan by Bank of India (BOI) (https://bankofindia.bank.in/home-loan)"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_13_LOAN_COMPARISON_INTENT",
+    "category": "Intent Routing",
+    "title": "Side-by-side comparison between two named banks",
+    "expected_behavior": "Should produce a clean, structured comparison table (interest rates, benchmarks, processing fees, tenure) for both institutions.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "Compare SBI Regular Home Loan vs HDFC Standard Home Loan.",
+        "detected_intent": "COMPARISON",
+        "response_type": "LOAN_COMPARISON",
+        "candidates_count": 2,
+        "candidates_summary": [
+          "State Bank of India (SBI) - SBI Regular Home Loan",
+          "HDFC Bank - HDFC Standard Home Loan"
+        ],
+        "has_clarification": false,
+        "clarification_summary": null,
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": null,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "Verified Schemes to Compare:\n[1] SBI Regular Home Loan (State Bank of India (SBI)) | Key: `7.25%_public_30y_home-loan_state_bank_of_india` | Rate: 7.25% - 8.95% p.a. (EBLR (External Benchmark Linked Lending Rate)) | Max: No upper cap (Determined by repayment capacity and LTV), 30y | Fee: 0.35% of loan amount (Min Rs. 2,000, Max Rs. 10,000) + applicable GST | Link: https://homeloans.sbi\n[2] HDFC Standard Home Loan (HDFC Bank) | Key: `7.40%_private_30y_home-loan_hdfc_bank` | Rate: 7.40% - 9.05% p.a. (Repo Rate Linked (Policy Repo Rate Benchmark)) | Max: Up to Rs. 10 Crores+ (Subject to applicant repaying capacity), 30y | Fee: Up to 0.50% of the loan amount or Rs. 3,000 (whichever is higher) + GST | Link: https://www.hdfcbank.com/personal/borrow/popular-loans/home-loan"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_14_DOCUMENTATION_ELIGIBILITY_QUERY",
+    "category": "Eligibility & Policy",
+    "title": "Documentation query for salaried home loan",
+    "expected_behavior": "Should list mandatory KYC, income proofs (3 months payslips, 6 months bank statement, Form 16), and property documents factually.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "What documents are required for a salaried home loan application?",
+        "detected_intent": "ELIGIBILITY_QUERY",
+        "response_type": "ELIGIBILITY_RESULT",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": false,
+        "clarification_summary": null,
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": null,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "Mandatory Documents Required for Home Loan:\n- Identity & Address Proof: PAN Card (mandatory), Aadhaar Card, Passport, or Voter ID.\n- Income Proof (Salaried): Last 3 months salary slips, 6 months bank statements showing salary credit, Form 16 / ITR.\n- Income Proof (Self-Employed): Last 2-3 years audited balance sheets, P&L, ITR with computation of income, 6 months business bank statement.\n- Property/Asset Documents: Title deeds, builder NOC, approved building plan, sale agreement."
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_15_GENERIC_INCOME_NORMS",
+    "category": "Eligibility & Policy",
+    "title": "Query regarding minimum salary benchmarks",
+    "expected_behavior": "Should explain public bank norms (\u20b915k-\u20b920k), private bank norms (\u20b925k-\u20b930k), and affordable housing entry thresholds (\u20b910k-\u20b912k).",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "What is the generic minimum salary required for home loans across banks?",
+        "detected_intent": "ELIGIBILITY_QUERY",
+        "response_type": "ELIGIBILITY_RESULT",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": false,
+        "clarification_summary": null,
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Home Loan",
+          "requested_amount": null,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "Verified Indian Home Loan Monthly Income Standards:\n- Public Sector Banks (SBI, Bank of Baroda, PNB): Minimum \u20b915,000 to \u20b925,000 net monthly salary.\n- Private Sector Banks (HDFC, ICICI, Kotak, Axis): Minimum \u20b925,000 (Tier-2/3) to \u20b930,000+/month (Metros).\n- Affordable Housing Finance (Kotak Vishwas, PMAY NBFCs): Minimum \u20b910,000 to \u20b912,000/month.\n- FOIR (Fixed Obligation to Income Ratio): All banks cap total monthly debt obligations at 50% of net monthly income.\n- Age & Stability: 21\u201365 years of age; minimum 2 years continuous employment stability."
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_16_EDUCATION_LOAN_DISCOVERY",
+    "category": "Category Specific",
+    "title": "Education loan inquiry for overseas studies",
+    "expected_behavior": "Should ask education-specific questions: university/course ranking, estimated total cost, co-borrower/parent income, and collateral availability.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "I need an education loan for MS in the US.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Education Loan",
+          "questions_count": 3,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Education Loan",
+          "requested_amount": null,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Self-Employed Professional",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified education loan options for your desired loan without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What is your approximate required home loan quantum?**\n   *Options*: `\u20b925 \u2013 \u20b940 Lakhs` | `\u20b950 \u2013 \u20b975 Lakhs` | `\u20b975 Lakhs \u2013 \u20b91.2 Cr` | `\u20b91.5 Crore+`\n2. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n3. **What is your net monthly take-home salary or income?**\n   *Options*: `\u20b935,000 \u2013 \u20b960,000` | `\u20b960,000 \u2013 \u20b91 Lakh` | `\u20b91 Lakh \u2013 \u20b91.8 Lakhs` | `\u20b92 Lakhs+`"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_17_PERSONAL_LOAN_DISCOVERY",
+    "category": "Category Specific",
+    "title": "Urgent personal loan inquiry",
+    "expected_behavior": "Should ask personal loan-specific questions: salaried vs self-employed, employer name, net monthly income, and required repayment horizon.",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "I need an urgent personal loan of \u20b95 lakhs.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Personal Loan",
+          "questions_count": 2,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Personal Loan",
+          "requested_amount": 500000.0,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Salaried",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [
+            "FAST_PROCESSING"
+          ],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified personal loan options for \u20b9500,000 without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n2. **What is your net monthly take-home salary or income?**\n   *Options*: `\u20b935,000 \u2013 \u20b960,000` | `\u20b960,000 \u2013 \u20b91 Lakh` | `\u20b91 Lakh \u2013 \u20b91.8 Lakhs` | `\u20b92 Lakhs+`"
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_18_CAR_LOAN_DISCOVERY",
+    "category": "Category Specific",
+    "title": "Vehicle loan inquiry for a specific car",
+    "expected_behavior": "Should ask car loan-specific questions: on-road price, down payment margin, new vs used, and preferred tenure (up to 7 years).",
+    "turns_recorded": [
+      {
+        "turn_index": 1,
+        "user_query": "I want a car loan for a new Hyundai Creta.",
+        "detected_intent": "RECOMMENDATION",
+        "response_type": "CLARIFICATION",
+        "candidates_count": 0,
+        "candidates_summary": [],
+        "has_clarification": true,
+        "clarification_summary": {
+          "category": "Vehicle Loan",
+          "questions_count": 3,
+          "missing_fields": []
+        },
+        "discovery_profile": {
+          "version": 2,
+          "loan_category": "Vehicle Loan",
+          "requested_amount": null,
+          "preferred_tenure_months": null,
+          "monthly_net_income": null,
+          "existing_monthly_emi": null,
+          "employment_type": "Self-Employed Professional",
+          "cibil_score": 750,
+          "city": null,
+          "priorities": [],
+          "maximum_monthly_emi": null,
+          "property_type": null,
+          "property_value": null,
+          "down_payment": null
+        },
+        "has_decision_trace": false,
+        "response_text": "To identify the most competitive, verified vehicle loan options for your desired loan without risking application rejection, Indian banks evaluate 4 core underwriting factors under RBI guidelines:\n\n1. **Net Monthly Income & Employer Category**: Determines your maximum eligible loan quantum and fee waiver brackets.\n2. **Preferred Loan Tenure**: Longer tenures lower your monthly EMI but increase total cumulative interest outflow.\n3. **Existing Monthly Obligations (FOIR)**: Banks legally cap all combined EMIs at 50%\u201360% of your take-home pay.\n4. **CIBIL Score**: RBI mandates external benchmark (EBLR) risk-tiered pricing (750+ unlocks the lowest base spread).\n\n**Please specify the following details to assess your exact eligibility:**\n1. **What is your approximate required home loan quantum?**\n   *Options*: `\u20b925 \u2013 \u20b940 Lakhs` | `\u20b950 \u2013 \u20b975 Lakhs` | `\u20b975 Lakhs \u2013 \u20b91.2 Cr` | `\u20b91.5 Crore+`\n2. **What repayment tenure are you considering?**\n   *Options*: `15 Years (180 mo)` | `20 Years (240 mo)` | `25 Years (300 mo)` | `30 Years (360 mo)`\n3. **What is your net monthly take-home salary or income?**\n   *Options*: `\u20b935,000 \u2013 \u20b960,000` | `\u20b960,000 \u2013 \u20b91 Lakh` | `\u20b91 Lakh \u2013 \u20b91.8 Lakhs` | `\u20b92 Lakhs+`"
+      }
+    ]
+  }
+]

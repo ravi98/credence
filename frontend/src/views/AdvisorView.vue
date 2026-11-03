@@ -420,7 +420,11 @@ const submitQuery = async () => {
       role: 'assistant',
       content: data.final_response,
       intent: data.intent,
+      response_type: data.response_type || 'GENERAL_ANSWER',
       candidates: data.candidates || [],
+      clarification: data.clarification || null,
+      discovery_profile: data.discovery_profile || null,
+      decision_trace: data.decision_trace || null,
       loading: false
     }
   } catch (error) {

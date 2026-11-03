@@ -65,6 +65,10 @@ class ChatResponse(BaseModel):
     final_response: str
     intent: str
     candidates: List[Dict[str, Any]] = []
+    response_type: str = "GENERAL_ANSWER"
+    clarification: Optional[Dict[str, Any]] = None
+    discovery_profile: Optional[Dict[str, Any]] = None
+    decision_trace: Optional[Dict[str, Any]] = None
 
 class EMIRequest(BaseModel):
     amount: float = Field(..., gt=0, description="Principal loan amount in Rupees")
@@ -445,12 +449,20 @@ async def chat_endpoint(request: ChatRequest):
         final_response = result_state.get("final_response", "")
         detected_intent = result_state.get("intent", "RECOMMENDATION")
         candidates = result_state.get("candidates", [])
+        response_type = result_state.get("response_type", "GENERAL_ANSWER")
+        clarification = result_state.get("clarification")
+        discovery_profile = result_state.get("discovery_profile")
+        decision_trace = result_state.get("decision_trace")
 
         return ChatResponse(
             chat_id=chat_id,
             final_response=final_response,
             intent=detected_intent,
-            candidates=candidates
+            candidates=candidates,
+            response_type=response_type,
+            clarification=clarification,
+            discovery_profile=discovery_profile,
+            decision_trace=decision_trace
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Graph execution failed: {str(e)}")

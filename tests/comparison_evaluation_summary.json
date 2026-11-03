@@ -1,0 +1,1044 @@
+[
+  {
+    "scenario_id": "SCENARIO_01_SILENT_TENURE_ASSUMPTION",
+    "title": "Query with loan quantum but unstated tenure and income",
+    "category": "Financial Assumption",
+    "expected_behavior": "Should recognize Home Loan and amount (1 Cr). Should NOT assume tenure or interest rate. Should NOT present premature personalized EMI. Should ask clarifying questions.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "I need a \u20b91 crore home loan.",
+        "baseline": {
+          "intent": "RECOMMENDATION",
+          "candidates_count": 2,
+          "candidates": [
+            "Indian Bank - IB Home Loan",
+            "Axis Bank - Axis Bank Regular Home Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\n[1] IB Home Loan (Indian Bank) | Section: PARENT_CARD\n..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": 10000000.0,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for \u20b910,000,000 without risking application rejection, Indian banks evaluate 4 ..."
+        },
+        "key_improvements": [
+          "Eliminated premature candidate dump on incomplete criteria; engaged consultative clarification."
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_02_EMI_WITHOUT_TENURE_OR_RATE",
+    "title": "EMI calculation query missing tenure and rate",
+    "category": "Financial Assumption",
+    "expected_behavior": "Should ask for tenure and interest rate, or present a clearly labeled illustrative scenario table across multiple tenures. Should never silently assume 5 years or 8.75%.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "Calculate EMI for \u20b950 lakh.",
+        "baseline": {
+          "intent": "EMI_CALCULATOR",
+          "candidates_count": 0,
+          "candidates": [],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\nEMI Calculation (Exact Math):\n- Principal: Rs. 5,000,0..."
+        },
+        "enhanced": {
+          "intent": "EMI_CALCULATOR",
+          "response_type": "EMI_RESULT",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": null,
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": null,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Self-Employed Professional",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "Illustrative EMI Breakdown for \u20b95,000,000 (at current ~8.5% EBLR benchmark):\n*(Exact interest rate and tenure depend on your credit score, e..."
+        },
+        "key_improvements": []
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_03_EXISTING_OBLIGATIONS_HANDLING",
+    "title": "Declared income with substantial existing EMIs",
+    "category": "Financial Assumption",
+    "expected_behavior": "Must capture existing EMI obligations (\u20b920k) and net income (\u20b91.5L). Must calculate available FOIR headroom (max 50-60% minus 20k) rather than assuming zero debt.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "I earn \u20b91.5 lakh monthly and have \u20b920,000 in existing EMIs. Can I get a home loan?",
+        "baseline": {
+          "intent": "ELIGIBILITY_QUERY",
+          "candidates_count": 0,
+          "candidates": [],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\nStandard Minimum Eligibility Criteria for Home Loan ac..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": null,
+            "preferred_tenure_months": null,
+            "monthly_net_income": 150000.0,
+            "existing_monthly_emi": null,
+            "employment_type": "Self-Employed Professional",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for your desired loan without risking application rejection, Indian banks evalu..."
+        },
+        "key_improvements": []
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_04_MULTI_TURN_REQUIREMENT_PERSISTENCE",
+    "title": "Progressive multi-turn requirement discovery",
+    "category": "Conversation State",
+    "expected_behavior": "All 3 details (amount=50L, employment=Salaried, income=1.2L, existing_emi=15k) must persist across turns without resetting or forgetting prior turns.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "I need a \u20b950 lakh home loan.",
+        "baseline": {
+          "intent": "RECOMMENDATION",
+          "candidates_count": 2,
+          "candidates": [
+            "Bank of Maharashtra - Maha Super Housing Loan",
+            "Axis Bank - Axis Bank Regular Home Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\n[1] Maha Super Housing Loan (Bank of Maharashtra) | Se..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": 5000000.0,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 c..."
+        },
+        "key_improvements": [
+          "Eliminated premature candidate dump on incomplete criteria; engaged consultative clarification."
+        ]
+      },
+      {
+        "turn": 2,
+        "query": "I'm salaried, earning \u20b91.2 lakh monthly.",
+        "baseline": {
+          "intent": "EMI_CALCULATOR",
+          "candidates_count": 0,
+          "candidates": [],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\nEMI Calculation (Exact Math):\n- Principal: Rs. 120,000..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 3,
+            "loan_category": "Home Loan",
+            "requested_amount": 5000000.0,
+            "preferred_tenure_months": null,
+            "monthly_net_income": 120000.0,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 c..."
+        },
+        "key_improvements": []
+      },
+      {
+        "turn": 3,
+        "query": "I have existing EMIs of \u20b915,000.",
+        "baseline": {
+          "intent": "EMI_CALCULATOR",
+          "candidates_count": 0,
+          "candidates": [],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\nEMI Calculation (Exact Math):\n- Principal: Rs. 1,000,0..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 3,
+            "loan_category": "Home Loan",
+            "requested_amount": 5000000.0,
+            "preferred_tenure_months": null,
+            "monthly_net_income": 120000.0,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 c..."
+        },
+        "key_improvements": [
+          "Fixed routing false positive where stating income/existing EMIs was misclassified as EMI calculator."
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_05_EXPLICIT_CORRECTION_HANDLING",
+    "title": "Customer corrects previously stated financial figure",
+    "category": "Conversation State",
+    "expected_behavior": "Should gracefully acknowledge the correction, update income to \u20b91.5 lakh, and not retain the old \u20b91.2 lakh figure in subsequent calculations.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "My monthly income is \u20b91.2 lakh, looking for 40 lakh loan.",
+        "baseline": {
+          "intent": "RECOMMENDATION",
+          "candidates_count": 2,
+          "candidates": [
+            "Bank of Maharashtra - Maha Super Housing Loan",
+            "Saraswat Bank - Saraswat Vastu Siddhi Home Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\n[1] Maha Super Housing Loan (Bank of Maharashtra) | Se..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": 4000000.0,
+            "preferred_tenure_months": null,
+            "monthly_net_income": 120000.0,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for \u20b94,000,000 without risking application rejection, Indian banks evaluate 4 c..."
+        },
+        "key_improvements": [
+          "Eliminated premature candidate dump on incomplete criteria; engaged consultative clarification."
+        ]
+      },
+      {
+        "turn": 2,
+        "query": "Actually, my income is \u20b91.5 lakh, not \u20b91.2 lakh.",
+        "baseline": {
+          "intent": "ELIGIBILITY_QUERY",
+          "candidates_count": 0,
+          "candidates": [],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\nStandard Minimum Eligibility Criteria for Home Loan ac..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 3,
+            "loan_category": "Home Loan",
+            "requested_amount": 4000000.0,
+            "preferred_tenure_months": null,
+            "monthly_net_income": 150000.0,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for \u20b94,000,000 without risking application rejection, Indian banks evaluate 4 c..."
+        },
+        "key_improvements": []
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_06_UNKNOWN_CIBIL_TOLERANCE",
+    "title": "Customer does not know their credit score",
+    "category": "Conversation State",
+    "expected_behavior": "Should continue discovery with an appropriate limitation note. Should never block the user or invent a random score (e.g. 750).",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "I want to explore home loans around 45 lakhs, salary 90k, but I don't know my CIBIL score.",
+        "baseline": {
+          "intent": "ELIGIBILITY_QUERY",
+          "candidates_count": 0,
+          "candidates": [],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\nVerified Indian Home Loan Monthly Income Eligibility S..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": 4500000.0,
+            "preferred_tenure_months": null,
+            "monthly_net_income": 90000.0,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for \u20b94,500,000 without risking application rejection, Indian banks evaluate 4 c..."
+        },
+        "key_improvements": []
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_07_LENDER_DIVERSITY_COVERAGE",
+    "title": "Broad recommendation seeking public and private lenders",
+    "category": "Candidate Retrieval",
+    "expected_behavior": "Should explore the broader 163-scheme catalog and present diverse public/private options rather than repeatedly returning the same top 2 Chroma chunks.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "Find suitable home loans from public and private banks for 60 lakh loan.",
+        "baseline": {
+          "intent": "RECOMMENDATION",
+          "candidates_count": 2,
+          "candidates": [
+            "Kotak Mahindra Bank - Kotak Fresh Home Loan",
+            "Kotak Mahindra Bank - Kotak Vishwas Affordable Home Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\n[1] Kotak Fresh Home Loan (Kotak Mahindra Bank) | Sect..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": 6000000.0,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for \u20b96,000,000 without risking application rejection, Indian banks evaluate 4 c..."
+        },
+        "key_improvements": [
+          "Eliminated premature candidate dump on incomplete criteria; engaged consultative clarification."
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_08_CHALLENGING_A_RECOMMENDATION",
+    "title": "Customer questions why a specific bank was omitted",
+    "category": "Decision Trace",
+    "expected_behavior": "Must not invent retrospective excuses (like 'I prefer private banks'). Must refer to actual retrieval boundary or criteria trace.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "Recommend top home loan options for \u20b975 lakh.",
+        "baseline": {
+          "intent": "RECOMMENDATION",
+          "candidates_count": 2,
+          "candidates": [
+            "Bank of Maharashtra - Maha Super Housing Loan",
+            "Indian Bank - IB Home Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\n[1] Maha Super Housing Loan (Bank of Maharashtra) | Se..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 3,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": null,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for your desired loan without risking application rejection, Indian banks evalu..."
+        },
+        "key_improvements": [
+          "Eliminated premature candidate dump on incomplete criteria; engaged consultative clarification."
+        ]
+      },
+      {
+        "turn": 2,
+        "query": "Why wasn't Indian Bank recommended?",
+        "baseline": {
+          "intent": "RECOMMENDATION",
+          "candidates_count": 2,
+          "candidates": [
+            "Indian Overseas Bank (IOB) - IOB Subha Gruha Housing Loan",
+            "Indian Bank - IB Home Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\n[1] IOB Subha Gruha Housing Loan (Indian Overseas Bank..."
+        },
+        "enhanced": {
+          "intent": "META_CHAT",
+          "response_type": "GENERAL_ANSWER",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": null,
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": null,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "DECISION TRACE VERIFICATION:\nCustomer is asking why Indian Bank was not recommended in the earlier shortlist.\nExplain honestly based on reco..."
+        },
+        "key_improvements": []
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_09_PREFERENCE_TOTAL_INTEREST_VS_EMI",
+    "title": "Customer explicitly prioritizes lowest total interest cost",
+    "category": "Ranking Engine",
+    "expected_behavior": "Should rank options prioritizing lowest interest rate and shorter tenure over maximum tenure options with lower monthly EMIs.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "I earn 1.5L and want a 50L home loan. I want the lowest total interest, not the lowest EMI.",
+        "baseline": {
+          "intent": "RECOMMENDATION",
+          "candidates_count": 2,
+          "candidates": [
+            "Indian Bank - IB Home Loan",
+            "Kotak Mahindra Bank - Kotak Fresh Home Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\n[1] IB Home Loan (Indian Bank) | Section: PARENT_CARD\n..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": 5000000.0,
+            "preferred_tenure_months": null,
+            "monthly_net_income": 150000.0,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [
+              "LOWEST_TOTAL_INTEREST",
+              "LOWER_MONTHLY_EMI"
+            ],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 c..."
+        },
+        "key_improvements": [
+          "Eliminated premature candidate dump on incomplete criteria; engaged consultative clarification."
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_10_MAX_COMFORTABLE_EMI_CONSTRAINT",
+    "title": "Customer sets an absolute ceiling on monthly EMI",
+    "category": "Ranking Engine",
+    "expected_behavior": "Should calculate that a \u20b950L loan at 8.5% over 20 years requires ~\u20b943,391 EMI, which exceeds \u20b935k. Should guide user to increase tenure to 25-30 years or adjust loan quantum to ~\u20b940L.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "I can pay a maximum EMI of \u20b935,000 for a \u20b950 lakh home loan. What can I get?",
+        "baseline": {
+          "intent": "RECOMMENDATION",
+          "candidates_count": 2,
+          "candidates": [
+            "Indian Bank - IB Home Loan Plus (Top-Up / Add-on Mortgage)",
+            "Indian Bank - IB Home Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\n[1] IB Home Loan Plus (Top-Up / Add-on Mortgage) (Indi..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Home Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": 5000000.0,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Self-Employed Professional",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": 35000.0,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 c..."
+        },
+        "key_improvements": [
+          "Eliminated premature candidate dump on incomplete criteria; engaged consultative clarification."
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_11_GENERAL_EDUCATION_INTENT",
+    "title": "General financial/regulatory concept inquiry",
+    "category": "Intent Routing",
+    "expected_behavior": "Should answer directly with educational facts (Fixed Obligation to Income Ratio, 50% cap). Should NOT launch the full loan discovery questionnaire.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "What is FOIR and how do banks calculate it?",
+        "baseline": {
+          "intent": "CONCEPT_FAQ",
+          "candidates_count": 0,
+          "candidates": [],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\nRBI Banking Facts:\n- EBLR vs MCLR: Since Oct 2019, all..."
+        },
+        "enhanced": {
+          "intent": "CONCEPT_FAQ",
+          "response_type": "GENERAL_ANSWER",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": null,
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": null,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Self-Employed Professional",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "FOIR (Fixed Obligation to Income Ratio) in Indian Banking:\n- Definition: The percentage of your net monthly income that goes toward servicin..."
+        },
+        "key_improvements": []
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_12_SPECIFIC_PRODUCT_QUERY_INTENT",
+    "title": "Inquiry about a specific banking product feature",
+    "category": "Intent Routing",
+    "expected_behavior": "Should retrieve and explain the specific SBI MaxGain scheme and its savings account interest offset. Should NOT launch a borrower questionnaire.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "Explain SBI MaxGain home loan and how the overdraft facility works.",
+        "baseline": {
+          "intent": "ELIGIBILITY_QUERY",
+          "candidates_count": 0,
+          "candidates": [],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\nStandard Minimum Eligibility Criteria for Home Loan ac..."
+        },
+        "enhanced": {
+          "intent": "SPECIFIC_PRODUCT_QUERY",
+          "response_type": "PRODUCT_DETAILS",
+          "candidates_count": 1,
+          "candidates": [
+            "Bank of India (BOI) - BOI Star Smart Home Loan"
+          ],
+          "clarification": null,
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": null,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "SPECIFIC PRODUCT ADVISORY:\nCustomer is inquiring about a specific loan product feature (e.g. SBI MaxGain overdraft facility).\nExplain factua..."
+        },
+        "key_improvements": []
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_13_LOAN_COMPARISON_INTENT",
+    "title": "Side-by-side comparison between two named banks",
+    "category": "Intent Routing",
+    "expected_behavior": "Should produce a clean, structured comparison table (interest rates, benchmarks, processing fees, tenure) for both institutions.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "Compare SBI Regular Home Loan vs HDFC Standard Home Loan.",
+        "baseline": {
+          "intent": "COMPARISON",
+          "candidates_count": 2,
+          "candidates": [
+            "State Bank of India (SBI) - SBI Regular Home Loan",
+            "HDFC Bank - HDFC Standard Home Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\nVerified Schemes to Compare:\n[1] SBI Regular Home Loan..."
+        },
+        "enhanced": {
+          "intent": "COMPARISON",
+          "response_type": "LOAN_COMPARISON",
+          "candidates_count": 2,
+          "candidates": [
+            "State Bank of India (SBI) - SBI Regular Home Loan",
+            "HDFC Bank - HDFC Standard Home Loan"
+          ],
+          "clarification": null,
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": null,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "Verified Schemes to Compare:\n[1] SBI Regular Home Loan (State Bank of India (SBI)) | Key: `7.25%_public_30y_home-loan_state_bank_of_india` |..."
+        },
+        "key_improvements": []
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_14_DOCUMENTATION_ELIGIBILITY_QUERY",
+    "title": "Documentation query for salaried home loan",
+    "category": "Eligibility & Policy",
+    "expected_behavior": "Should list mandatory KYC, income proofs (3 months payslips, 6 months bank statement, Form 16), and property documents factually.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "What documents are required for a salaried home loan application?",
+        "baseline": {
+          "intent": "ELIGIBILITY_QUERY",
+          "candidates_count": 0,
+          "candidates": [],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\nMandatory Documents Required for Home Loan:\n- Identity..."
+        },
+        "enhanced": {
+          "intent": "ELIGIBILITY_QUERY",
+          "response_type": "ELIGIBILITY_RESULT",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": null,
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": null,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "Mandatory Documents Required for Home Loan:\n- Identity & Address Proof: PAN Card (mandatory), Aadhaar Card, Passport, or Voter ID.\n- Income ..."
+        },
+        "key_improvements": []
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_15_GENERIC_INCOME_NORMS",
+    "title": "Query regarding minimum salary benchmarks",
+    "category": "Eligibility & Policy",
+    "expected_behavior": "Should explain public bank norms (\u20b915k-\u20b920k), private bank norms (\u20b925k-\u20b930k), and affordable housing entry thresholds (\u20b910k-\u20b912k).",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "What is the generic minimum salary required for home loans across banks?",
+        "baseline": {
+          "intent": "ELIGIBILITY_QUERY",
+          "candidates_count": 0,
+          "candidates": [],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\nVerified Indian Home Loan Monthly Income Eligibility S..."
+        },
+        "enhanced": {
+          "intent": "ELIGIBILITY_QUERY",
+          "response_type": "ELIGIBILITY_RESULT",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": null,
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Home Loan",
+            "requested_amount": null,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "Verified Indian Home Loan Monthly Income Standards:\n- Public Sector Banks (SBI, Bank of Baroda, PNB): Minimum \u20b915,000 to \u20b925,000 net monthly..."
+        },
+        "key_improvements": []
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_16_EDUCATION_LOAN_DISCOVERY",
+    "title": "Education loan inquiry for overseas studies",
+    "category": "Category Specific",
+    "expected_behavior": "Should ask education-specific questions: university/course ranking, estimated total cost, co-borrower/parent income, and collateral availability.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "I need an education loan for MS in the US.",
+        "baseline": {
+          "intent": "RECOMMENDATION",
+          "candidates_count": 2,
+          "candidates": [
+            "Bank of Maharashtra - Maha Scholar Education Loan Scheme",
+            "Kotak Mahindra Bank - Kotak Education Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\n[1] Maha Scholar Education Loan Scheme (Bank of Mahara..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Education Loan",
+            "questions_count": 3,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Education Loan",
+            "requested_amount": null,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Self-Employed Professional",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified education loan options for your desired loan without risking application rejection, Indian banks ..."
+        },
+        "key_improvements": [
+          "Eliminated premature candidate dump on incomplete criteria; engaged consultative clarification."
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_17_PERSONAL_LOAN_DISCOVERY",
+    "title": "Urgent personal loan inquiry",
+    "category": "Category Specific",
+    "expected_behavior": "Should ask personal loan-specific questions: salaried vs self-employed, employer name, net monthly income, and required repayment horizon.",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "I need an urgent personal loan of \u20b95 lakhs.",
+        "baseline": {
+          "intent": "RECOMMENDATION",
+          "candidates_count": 2,
+          "candidates": [
+            "Bank of Maharashtra - Maha Bank Personal Loan Scheme",
+            "Kotak Mahindra Bank - Kotak Smart EMI Personal Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\n[1] Maha Bank Personal Loan Scheme (Bank of Maharashtr..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Personal Loan",
+            "questions_count": 2,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Personal Loan",
+            "requested_amount": 500000.0,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Salaried",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [
+              "FAST_PROCESSING"
+            ],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified personal loan options for \u20b9500,000 without risking application rejection, Indian banks evaluate 4..."
+        },
+        "key_improvements": [
+          "Eliminated premature candidate dump on incomplete criteria; engaged consultative clarification."
+        ]
+      }
+    ]
+  },
+  {
+    "scenario_id": "SCENARIO_18_CAR_LOAN_DISCOVERY",
+    "title": "Vehicle loan inquiry for a specific car",
+    "category": "Category Specific",
+    "expected_behavior": "Should ask car loan-specific questions: on-road price, down payment margin, new vs used, and preferred tenure (up to 7 years).",
+    "turns": [
+      {
+        "turn": 1,
+        "query": "I want a car loan for a new Hyundai Creta.",
+        "baseline": {
+          "intent": "RECOMMENDATION",
+          "candidates_count": 2,
+          "candidates": [
+            "UCO Bank - UCO Car Loan",
+            "YES Bank - YES Auto Loan"
+          ],
+          "sample_snippet": "*(Note: LLM provider unavailable. Returning instant verified catalog data directly)*\n\n[1] UCO Car Loan (UCO Bank) | Section: PARENT_CARD\n- K..."
+        },
+        "enhanced": {
+          "intent": "RECOMMENDATION",
+          "response_type": "CLARIFICATION",
+          "candidates_count": 0,
+          "candidates": [],
+          "clarification": {
+            "category": "Vehicle Loan",
+            "questions_count": 3,
+            "missing_fields": []
+          },
+          "profile_state": {
+            "version": 2,
+            "loan_category": "Vehicle Loan",
+            "requested_amount": null,
+            "preferred_tenure_months": null,
+            "monthly_net_income": null,
+            "existing_monthly_emi": null,
+            "employment_type": "Self-Employed Professional",
+            "cibil_score": 750,
+            "city": null,
+            "priorities": [],
+            "maximum_monthly_emi": null,
+            "property_type": null,
+            "property_value": null,
+            "down_payment": null
+          },
+          "sample_snippet": "To identify the most competitive, verified vehicle loan options for your desired loan without risking application rejection, Indian banks ev..."
+        },
+        "key_improvements": [
+          "Eliminated premature candidate dump on incomplete criteria; engaged consultative clarification."
+        ]
+      }
+    ]
+  }
+]
