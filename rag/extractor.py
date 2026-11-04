@@ -284,6 +284,32 @@ def extract_parameters_from_text(query: str) -> Dict[str, Any]:
     is_correction = any(w in q for w in ["actually", "correction", "mistake", "not ... but", "not 1."])
     extracted["is_correction"] = is_correction
 
+    # 15. Vehicle Type (Car Loans)
+    if any(w in q for w in ["brand new car", "new car", "new vehicle", "showroom"]):
+        extracted["vehicle_type"] = "New Car"
+    elif any(w in q for w in ["used car", "second hand", "pre owned", "pre-owned"]):
+        extracted["vehicle_type"] = "Used Car"
+
+    # 16. Study Destination (Education Loans)
+    if any(w in q for w in ["overseas", "abroad", "foreign", "in us", "in usa", "in uk", "in canada", "in germany", "in europe", "in australia", "ms in"]):
+        extracted["study_destination"] = "Overseas"
+    elif any(w in q for w in ["domestic", "in india", "indian university", "iim", "iit"]):
+        extracted["study_destination"] = "Domestic"
+
+    # 17. Education Collateral
+    if any(w in q for w in ["collateral free", "without collateral", "unsecured", "no collateral", "cgfsel"]):
+        extracted["collateral_type"] = "Unsecured"
+    elif any(w in q for w in ["with collateral", "property collateral", "secured", "pledge", "fixed deposit"]):
+        extracted["collateral_type"] = "Collateralized"
+
+    # 18. Salary Bank
+    if any(w in q for w in ["salary in sbi", "sbi salary", "salary account sbi", "account in sbi"]):
+        extracted["salary_bank"] = "SBI"
+    elif any(w in q for w in ["salary in hdfc", "hdfc salary", "salary account hdfc", "account in hdfc"]):
+        extracted["salary_bank"] = "HDFC"
+    elif any(w in q for w in ["salary in icici", "icici salary", "salary account icici"]):
+        extracted["salary_bank"] = "ICICI"
+
     return extracted
 
 def update_profile_from_query(
@@ -365,6 +391,22 @@ def update_profile_from_query(
 
     if "city" in extracted:
         current_profile.city.set_user_value(extracted["city"])
+        modified = True
+
+    if "vehicle_type" in extracted:
+        current_profile.vehicle_type.set_user_value(extracted["vehicle_type"])
+        modified = True
+
+    if "study_destination" in extracted:
+        current_profile.study_destination.set_user_value(extracted["study_destination"])
+        modified = True
+
+    if "collateral_type" in extracted:
+        current_profile.collateral_type.set_user_value(extracted["collateral_type"])
+        modified = True
+
+    if "salary_bank" in extracted:
+        current_profile.salary_bank.set_user_value(extracted["salary_bank"])
         modified = True
 
     if "priorities" in extracted:

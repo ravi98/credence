@@ -10,7 +10,18 @@
           <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold bg-brand/10 text-brand border border-brand/20">
             {{ clarification?.category || 'Loan' }} Discovery
           </span>
-          <span class="text-xs font-semibold text-brand-muted">
+          <!-- 3-Tier Readiness Status Pill -->
+          <span 
+            v-if="clarification?.discovery_progress?.readiness" 
+            class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold"
+            :class="clarification.discovery_progress.readiness === 'ELIGIBILITY_ASSESSED' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : (clarification.discovery_progress.readiness === 'PERSONALIZED' ? 'bg-teal-50 text-teal-800 border border-teal-200' : 'bg-amber-50 text-amber-800 border border-amber-200')"
+          >
+            {{ clarification.discovery_progress.readiness === 'ELIGIBILITY_ASSESSED' ? '✓ Underwriting Assessed' : (clarification.discovery_progress.readiness === 'PERSONALIZED' ? '⚡ Personalized Match Ready' : '📋 Preliminary Discovery') }}
+          </span>
+          <span v-if="clarification?.discovery_progress?.total_core_dimensions" class="text-xs font-medium text-brand-muted">
+            • {{ clarification.discovery_progress.known_count }} of {{ clarification.discovery_progress.total_core_dimensions }} criteria confirmed ({{ clarification.discovery_progress.percentage }}%)
+          </span>
+          <span v-else class="text-xs font-semibold text-brand-muted">
             Zero Guesswork · RBI Underwriting Standards
           </span>
         </div>
@@ -51,6 +62,19 @@
         <div v-if="q.explanation" class="text-[11px] text-brand-muted bg-surface-canvas rounded-lg px-2.5 py-1.5 flex items-start gap-1.5 border border-surface-border/60">
           <Info class="w-3.5 h-3.5 text-sage flex-shrink-0 mt-0.5" />
           <span class="leading-normal"><strong class="text-brand font-semibold">Why this matters:</strong> {{ q.explanation }}</span>
+        </div>
+
+        <!-- Question Decision Impacts (Sections 4 & 5 of Decision Suggestions) -->
+        <div v-if="q.decision_impacts && q.decision_impacts.length" class="flex items-center gap-1.5 flex-wrap pt-0.5">
+          <span 
+            v-for="(di, diIdx) in q.decision_impacts" 
+            :key="diIdx"
+            class="text-[10px] font-medium text-brand/90 bg-brand/5 border border-brand/15 px-2 py-0.5 rounded-md flex items-center gap-1"
+            :title="di.rule_description"
+          >
+            <Sparkles class="w-2.5 h-2.5 text-brand flex-shrink-0" />
+            <span class="uppercase tracking-wide text-[9px] text-brand-muted font-bold">{{ di.impact_type?.replace(/_/g, ' ') }}</span>: {{ di.operation?.replace(/_/g, ' ') }}
+          </span>
         </div>
 
         <!-- Direct Input Box (If input_type is currency, text, or number) -->

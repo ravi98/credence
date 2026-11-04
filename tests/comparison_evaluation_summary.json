@@ -24,7 +24,7 @@
           "candidates": [],
           "clarification": {
             "category": "Home Loan",
-            "questions_count": 2,
+            "questions_count": 3,
             "missing_fields": []
           },
           "profile_state": {
@@ -41,7 +41,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for \u20b910,000,000 without risking application rejection, Indian banks evaluate 4 ..."
         },
@@ -86,7 +90,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "Illustrative EMI Breakdown for \u20b95,000,000 (at current ~8.5% EBLR benchmark):\n*(Exact interest rate and tenure depend on your credit score, e..."
         },
@@ -116,7 +124,7 @@
           "candidates": [],
           "clarification": {
             "category": "Home Loan",
-            "questions_count": 2,
+            "questions_count": 3,
             "missing_fields": []
           },
           "profile_state": {
@@ -133,7 +141,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for your desired loan without risking application rejection, Indian banks evalu..."
         },
@@ -166,7 +178,7 @@
           "candidates": [],
           "clarification": {
             "category": "Home Loan",
-            "questions_count": 2,
+            "questions_count": 3,
             "missing_fields": []
           },
           "profile_state": {
@@ -183,7 +195,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 c..."
         },
@@ -207,7 +223,7 @@
           "candidates": [],
           "clarification": {
             "category": "Home Loan",
-            "questions_count": 2,
+            "questions_count": 3,
             "missing_fields": []
           },
           "profile_state": {
@@ -224,7 +240,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 c..."
         },
@@ -246,7 +266,7 @@
           "candidates": [],
           "clarification": {
             "category": "Home Loan",
-            "questions_count": 2,
+            "questions_count": 3,
             "missing_fields": []
           },
           "profile_state": {
@@ -263,7 +283,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 c..."
         },
@@ -298,7 +322,7 @@
           "candidates": [],
           "clarification": {
             "category": "Home Loan",
-            "questions_count": 2,
+            "questions_count": 3,
             "missing_fields": []
           },
           "profile_state": {
@@ -315,7 +339,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for \u20b94,000,000 without risking application rejection, Indian banks evaluate 4 c..."
         },
@@ -339,7 +367,7 @@
           "candidates": [],
           "clarification": {
             "category": "Home Loan",
-            "questions_count": 2,
+            "questions_count": 3,
             "missing_fields": []
           },
           "profile_state": {
@@ -356,7 +384,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for \u20b94,000,000 without risking application rejection, Indian banks evaluate 4 c..."
         },
@@ -386,7 +418,7 @@
           "candidates": [],
           "clarification": {
             "category": "Home Loan",
-            "questions_count": 2,
+            "questions_count": 3,
             "missing_fields": []
           },
           "profile_state": {
@@ -403,7 +435,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for \u20b94,500,000 without risking application rejection, Indian banks evaluate 4 c..."
         },
@@ -436,7 +472,7 @@
           "candidates": [],
           "clarification": {
             "category": "Home Loan",
-            "questions_count": 2,
+            "questions_count": 3,
             "missing_fields": []
           },
           "profile_state": {
@@ -453,7 +489,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for \u20b96,000,000 without risking application rejection, Indian banks evaluate 4 c..."
         },
@@ -505,7 +545,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for your desired loan without risking application rejection, Indian banks evalu..."
         },
@@ -545,7 +589,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "DECISION TRACE VERIFICATION:\nCustomer is asking why Indian Bank was not recommended in the earlier shortlist.\nExplain honestly based on reco..."
         },
@@ -598,7 +646,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 c..."
         },
@@ -633,7 +685,7 @@
           "candidates": [],
           "clarification": {
             "category": "Home Loan",
-            "questions_count": 2,
+            "questions_count": 3,
             "missing_fields": []
           },
           "profile_state": {
@@ -650,7 +702,11 @@
             "maximum_monthly_emi": 35000.0,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified home loan options for \u20b95,000,000 without risking application rejection, Indian banks evaluate 4 c..."
         },
@@ -695,7 +751,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "FOIR (Fixed Obligation to Income Ratio) in Indian Banking:\n- Definition: The percentage of your net monthly income that goes toward servicin..."
         },
@@ -740,7 +800,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "SPECIFIC PRODUCT ADVISORY:\nCustomer is inquiring about a specific loan product feature (e.g. SBI MaxGain overdraft facility).\nExplain factua..."
         },
@@ -789,7 +853,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "Verified Schemes to Compare:\n[1] SBI Regular Home Loan (State Bank of India (SBI)) | Key: `7.25%_public_30y_home-loan_state_bank_of_india` |..."
         },
@@ -832,7 +900,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "Mandatory Documents Required for Home Loan:\n- Identity & Address Proof: PAN Card (mandatory), Aadhaar Card, Passport, or Voter ID.\n- Income ..."
         },
@@ -875,7 +947,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "Verified Indian Home Loan Monthly Income Standards:\n- Public Sector Banks (SBI, Bank of Baroda, PNB): Minimum \u20b915,000 to \u20b925,000 net monthly..."
         },
@@ -925,7 +1001,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": "Overseas",
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified education loan options for your desired loan without risking application rejection, Indian banks ..."
         },
@@ -979,7 +1059,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified personal loan options for \u20b9500,000 without risking application rejection, Indian banks evaluate 4..."
         },
@@ -1031,7 +1115,11 @@
             "maximum_monthly_emi": null,
             "property_type": null,
             "property_value": null,
-            "down_payment": null
+            "down_payment": null,
+            "vehicle_type": null,
+            "study_destination": null,
+            "collateral_type": null,
+            "salary_bank": null
           },
           "sample_snippet": "To identify the most competitive, verified vehicle loan options for your desired loan without risking application rejection, Indian banks ev..."
         },

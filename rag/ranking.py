@@ -60,6 +60,25 @@ class DeterministicRanker:
                 score += (total_interest / 100000.0) * 0.5
             elif "LOWER_MONTHLY_EMI" in priorities:
                 score += (est_emi / 10000.0) * 0.8
+            elif "FAST_PROCESSING" in priorities:
+                sector = str(m.get("sector") or "").lower()
+                if "private" in sector:
+                    score -= 2.0
+
+            # Decision Impact: Salary relationship bank preference
+            if profile.salary_bank.is_known():
+                sal_bank = profile.salary_bank.value.lower()
+                inst = str(m.get("institution") or "").lower()
+                if sal_bank in inst:
+                    score -= 3.0
+
+            # Decision Impact: Dedicated Plot/Land match
+            is_plot_match = False
+            if profile.property_type.value == "Plot":
+                s_name = str(m.get("scheme_name") or "").lower()
+                if any(w in s_name for w in ["plot", "land", "realty"]):
+                    score -= 4.0
+                    is_plot_match = True
 
             # Processing fee bonus
             p_fee = str(m.get("processing_fee") or "").lower()
@@ -74,7 +93,13 @@ class DeterministicRanker:
 
             # Assign explanatory badge
             badge = "Balanced Value"
-            if base_rate <= 7.5:
+            if is_plot_match:
+                badge = "Dedicated Plot Financing"
+            elif profile.salary_bank.is_known() and profile.salary_bank.value.lower() in str(m.get("institution") or "").lower():
+                badge = "Salary Bank Pre-Approval"
+            elif "FAST_PROCESSING" in priorities and "private" in str(m.get("sector") or "").lower():
+                badge = "Fast Digital Sanction"
+            elif base_rate <= 7.5:
                 badge = "Lowest Base Rate"
             elif "nil" in p_fee or "zero" in p_fee:
                 badge = "Zero Processing Fee"

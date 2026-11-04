@@ -69,6 +69,7 @@ class ChatResponse(BaseModel):
     clarification: Optional[Dict[str, Any]] = None
     discovery_profile: Optional[Dict[str, Any]] = None
     decision_trace: Optional[Dict[str, Any]] = None
+    discovery_progress: Optional[Dict[str, Any]] = None
 
 class EMIRequest(BaseModel):
     amount: float = Field(..., gt=0, description="Principal loan amount in Rupees")
@@ -454,6 +455,8 @@ async def chat_endpoint(request: ChatRequest):
         discovery_profile = result_state.get("discovery_profile")
         decision_trace = result_state.get("decision_trace")
 
+        discovery_progress = result_state.get("discovery_progress") or (clarification.get("discovery_progress") if clarification else None)
+
         return ChatResponse(
             chat_id=chat_id,
             final_response=final_response,
@@ -462,7 +465,8 @@ async def chat_endpoint(request: ChatRequest):
             response_type=response_type,
             clarification=clarification,
             discovery_profile=discovery_profile,
-            decision_trace=decision_trace
+            decision_trace=decision_trace,
+            discovery_progress=discovery_progress
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Graph execution failed: {str(e)}")

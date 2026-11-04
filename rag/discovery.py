@@ -79,6 +79,10 @@ class LoanDiscoveryProfile(BaseModel):
     property_type: FieldItem[str] = Field(default_factory=FieldItem[str])
     property_value: FieldItem[float] = Field(default_factory=FieldItem[float])
     down_payment: FieldItem[float] = Field(default_factory=FieldItem[float])
+    vehicle_type: FieldItem[str] = Field(default_factory=FieldItem[str]) # "New", "Used"
+    study_destination: FieldItem[str] = Field(default_factory=FieldItem[str]) # "Domestic", "Overseas"
+    collateral_type: FieldItem[str] = Field(default_factory=FieldItem[str]) # "Unsecured / Collateral-Free", "Immovable Property Collateral"
+    salary_bank: FieldItem[str] = Field(default_factory=FieldItem[str])
 
     def to_dict_summary(self) -> Dict[str, Any]:
         return {
@@ -95,7 +99,11 @@ class LoanDiscoveryProfile(BaseModel):
             "maximum_monthly_emi": self.maximum_monthly_emi.value,
             "property_type": self.property_type.value,
             "property_value": self.property_value.value,
-            "down_payment": self.down_payment.value
+            "down_payment": self.down_payment.value,
+            "vehicle_type": self.vehicle_type.value,
+            "study_destination": self.study_destination.value,
+            "collateral_type": self.collateral_type.value,
+            "salary_bank": self.salary_bank.value
         }
 
     @classmethod
@@ -127,6 +135,14 @@ class LoanDiscoveryProfile(BaseModel):
             p.property_value.set_user_value(float(d["property_value"]))
         if d.get("down_payment") is not None:
             p.down_payment.set_user_value(float(d["down_payment"]))
+        if d.get("vehicle_type"):
+            p.vehicle_type.set_user_value(d["vehicle_type"])
+        if d.get("study_destination"):
+            p.study_destination.set_user_value(d["study_destination"])
+        if d.get("collateral_type"):
+            p.collateral_type.set_user_value(d["collateral_type"])
+        if d.get("salary_bank"):
+            p.salary_bank.set_user_value(d["salary_bank"])
         return p
 
 

@@ -49,6 +49,7 @@ class LoanAdvisorState(TypedDict):
     clarification: Optional[Dict[str, Any]]
     decision_trace: Optional[Dict[str, Any]]
     response_type: str
+    discovery_progress: Optional[Dict[str, Any]]
 
 SYSTEM_PROMPT = """You are Credence, an expert, objective Indian Retail Loan Advisor.
 CORE RULES:
@@ -137,6 +138,7 @@ def clarify_node(state: LoanAdvisorState) -> Dict[str, Any]:
     return {
         "candidates": [],
         "clarification": eval_res,
+        "discovery_progress": eval_res.get("discovery_progress"),
         "response_type": "CLARIFICATION",
         "context_text": clarify_context
     }
@@ -209,11 +211,18 @@ def recommend_node(state: LoanAdvisorState) -> Dict[str, Any]:
             f"- Official Portal: {m.get('source_url')}"
         )
 
+    eval_res = clarification_manager.evaluate_readiness(
+        profile, 
+        "RECOMMENDATION",
+        query=state.get("query")
+    )
+
     return {
         "candidates": top_candidates,
         "active_schemes": top_candidates,
         "decision_trace": trace.model_dump(),
         "clarification": None,
+        "discovery_progress": eval_res.get("discovery_progress"),
         "response_type": "LOAN_RECOMMENDATION",
         "context_text": "\n\n".join(context_lines)
     }
@@ -679,7 +688,8 @@ def llm_generator_node(state: LoanAdvisorState) -> Dict[str, Any]:
         "final_response": answer_text,
         "chat_history": new_history,
         "response_type": res_type,
-        "clarification": clar_data
+        "clarification": clar_data,
+        "discovery_progress": state.get("discovery_progress") or (clar_data.get("discovery_progress") if clar_data else None)
     }
 
 # ==================== Graph Compilation ====================

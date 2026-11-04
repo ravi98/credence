@@ -68,8 +68,31 @@ class StructuredCandidateRetriever:
         private_candidates = []
 
         for inst, inst_schemes in by_institution.items():
-            # Pick best rate scheme per institution
-            best_scheme = sorted(inst_schemes, key=lambda x: x.get("min_rate_num") or 99.0)[0]
+            # Apply Decision Impact on collateral / product type
+            best_scheme = None
+
+            # 1. Plot/Land Purchase preference
+            if profile.property_type.value == "Plot":
+                plot_schemes = [s for s in inst_schemes if any(w in s.get("scheme_name", "").lower() for w in ["plot", "land", "realty"])]
+                if plot_schemes:
+                    best_scheme = sorted(plot_schemes, key=lambda x: x.get("min_rate_num") or 99.0)[0]
+
+            # 2. Overseas education preference
+            elif profile.study_destination.value == "Overseas":
+                overseas_schemes = [s for s in inst_schemes if any(w in s.get("scheme_name", "").lower() for w in ["overseas", "global", "foreign", "international"])]
+                if overseas_schemes:
+                    best_scheme = sorted(overseas_schemes, key=lambda x: x.get("min_rate_num") or 99.0)[0]
+
+            # 3. Used/Pre-owned vehicle preference
+            elif profile.vehicle_type.value == "Used Car":
+                used_schemes = [s for s in inst_schemes if any(w in s.get("scheme_name", "").lower() for w in ["used", "pre-owned", "certified pre-owned"])]
+                if used_schemes:
+                    best_scheme = sorted(used_schemes, key=lambda x: x.get("min_rate_num") or 99.0)[0]
+
+            # Default: Pick best rate scheme per institution
+            if not best_scheme:
+                best_scheme = sorted(inst_schemes, key=lambda x: x.get("min_rate_num") or 99.0)[0]
+
             sector = best_scheme.get("sector", "").lower()
             if "public" in sector:
                 public_candidates.append(best_scheme)
